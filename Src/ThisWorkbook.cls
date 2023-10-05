@@ -27,7 +27,7 @@ Attribute resultsTable.VB_VarHelpID = -1
 Private WithEvents databaseTable As DynamicTable
 Attribute databaseTable.VB_VarHelpID = -1
 
-
+'hola
 Private Sub Workbook_Open()
     Application.EnableAutoComplete = False
     Application.ScreenUpdating = False
