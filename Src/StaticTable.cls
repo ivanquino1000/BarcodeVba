@@ -76,6 +76,7 @@ Public Sub Init(ByVal row As Integer, _
 End Sub
 
 Public Sub Update()
+    UpdateRanges
     With this
         .ws.Select
         HeadersComp.Update .ws
@@ -84,8 +85,7 @@ Public Sub Update()
     End With
 End Sub
 
-Public Sub ElementsUpdate()
-    
+Public Sub ClearPrevRange()
     If Not this.PreviousElemRange Is Nothing Then
         With this.PreviousElemRange
             .ClearContents
@@ -93,6 +93,10 @@ Public Sub ElementsUpdate()
             .Interior.Color = RGB(17, 21, 28)
         End With
     End If
+End Sub
+
+Public Sub ElementsUpdate()
+    
     With this
         Call ApplyFormat(.ElementsRange, .ElementsFormat)
         Set .PreviousElemRange = .ElementsRange
@@ -145,6 +149,12 @@ Public Property Let column(ByVal value As Integer)
     UpdateRanges
 End Property
 
+Public Property Let ElementsCounter(ByVal RHS As Integer)
+    this.ElementsCounter = RHS
+    Update
+End Property
+
+
 Public Property Get Headers() As Headers
     Set Headers = this.Headers
 End Property
@@ -173,11 +183,6 @@ End Property
 Public Property Get ElementsCounter() As Integer
     ElementsCounter = this.ElementsCounter
 End Property
-
-Public Property Let ElementsCounter(ByVal RHS As Integer)
-    this.ElementsCounter = RHS
-End Property
-
 
 Public Property Get Range() As Range
     Set Range = this.Range

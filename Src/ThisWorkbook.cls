@@ -19,6 +19,7 @@ Const IntroductoryMessage As String = "Welcome to Codebar Printer You will first
         vbNewLine & "-IvanQuino1000"
 
 Private WithEvents listTable As DynamicTable
+Attribute listTable.VB_VarHelpID = -1
 Private WithEvents searchTable As StaticTable
 Attribute searchTable.VB_VarHelpID = -1
 Private WithEvents resultsTable As StaticTable
@@ -72,10 +73,20 @@ Private Sub Workbook_Open()
     Application.EnableEvents = True
 End Sub
 
+
 Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
+    
     If Not Intersect(Target, searchTable.ElementsRange) Is Nothing Then
-'        databaseTable.Range.AdvancedFilter Action:=xlFilterCopy, _
-'                criteriarange:=searchTable.Range, CopyToRange:=resultsTable.HeadersComp.Range, _
+        resultsTable.ClearPrevRange
+        Dim Elements As Integer
+        databaseTable.Range.AdvancedFilter Action:=xlFilterCopy, _
+                criteriarange:=searchTable.Range, CopyToRange:=resultsTable.HeadersComp.Range, _
                 Unique:=False
+             With resultsTable
+            Elements = .ws.Cells(.ws.Rows.Count, .column).End(xlUp).row - .row
+        End With
+        resultsTable.ElementsCounter = Elements
+        
     End If
 End Sub
+
