@@ -17,20 +17,21 @@ Const IntroductoryMessage As String = "Welcome to Codebar Printer You will first
         vbNewLine & "      @TEXTO *?*: Datos Opcionales de Relleno" & vbNewLine & _
         vbNewLine & "- Al finalizar enviar y subir los productos creados en esta sesion" & _
         vbNewLine & "-IvanQuino1000"
+
 Private WithEvents listTable As DynamicTable
-Attribute listTable.VB_VarHelpID = -1
-'Private WithEvents searchTable As StaticTable
-'Private WithEvents resultsTable As StaticTable
+Private WithEvents searchTable As StaticTable
+Attribute searchTable.VB_VarHelpID = -1
+Private WithEvents resultsTable As StaticTable
+Attribute resultsTable.VB_VarHelpID = -1
 Private WithEvents databaseTable As DynamicTable
 Attribute databaseTable.VB_VarHelpID = -1
 
 
 Private Sub Workbook_Open()
     Application.EnableAutoComplete = False
-
     Application.ScreenUpdating = False
-    'Application.EnableEvents = False
-    Dim sheet As Worksheet
+    Application.EnableEvents = False
+    Dim sheet       As Worksheet
     For Each sheet In Me.Sheets
         With sheet.Cells
             .ClearContents
@@ -42,6 +43,8 @@ Private Sub Workbook_Open()
 
     Set listTable = New DynamicTable
     Set databaseTable = New DynamicTable
+    Set searchTable = New StaticTable
+    Set resultsTable = New StaticTable
 
     listTable.Init 5, 5, ThisWorkbook.Sheets("MainSheet"), _
             Array( _
@@ -52,13 +55,27 @@ Private Sub Workbook_Open()
             Array( _
             "Codigo", "Nombre", "Precio" _
             )
+    searchTable.Init 2, 15, ThisWorkbook.Sheets("MainSheet"), _
+            Array( _
+            "Codigo", "Nombre", "Precio" _
+            )
+    resultsTable.Init 5, 15, ThisWorkbook.Sheets("MainSheet"), _
+            Array( _
+            "Codigo", "Nombre", "Precio" _
+            )
+
 
     databaseTable.GetData
 
+    ThisWorkbook.Sheets("MainSheet").Select
     Application.ScreenUpdating = True
     Application.EnableEvents = True
 End Sub
 
-
-
-
+Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
+    If Not Intersect(Target, searchTable.ElementsRange) Is Nothing Then
+'        databaseTable.Range.AdvancedFilter Action:=xlFilterCopy, _
+'                criteriarange:=searchTable.Range, CopyToRange:=resultsTable.HeadersComp.Range, _
+                Unique:=False
+    End If
+End Sub

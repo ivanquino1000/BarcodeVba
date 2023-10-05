@@ -33,7 +33,7 @@ Private Type TStaticTable
     ElementsRange   As Range
     PreviousElemRange As Range
     ElementsCounter As Integer
-    ElementsFormat As FormatSettings
+    ElementsFormat  As FormatSettings
 End Type
 Private this        As TStaticTable
 
@@ -53,7 +53,7 @@ Private Sub Class_Initialize()
         End With
     End With
     Set HeadersComp = New Headers
-        
+
 End Sub
 
 Public Sub Init(ByVal row As Integer, _
@@ -68,7 +68,7 @@ Public Sub Init(ByVal row As Integer, _
         With HeadersComp
             .values = Headers
         End With
-        
+
         Update
     End With
 
@@ -85,9 +85,9 @@ Public Sub Update()
 End Sub
 
 Public Sub ElementsUpdate()
-
-    If Not PreviousRange Is Nothing Then
-        With PreviousRange
+    
+    If Not this.PreviousElemRange Is Nothing Then
+        With this.PreviousElemRange
             .ClearContents
             .ClearFormats
             .Interior.Color = RGB(17, 21, 28)
@@ -97,7 +97,7 @@ Public Sub ElementsUpdate()
         Call ApplyFormat(.ElementsRange, .ElementsFormat)
         Set .PreviousElemRange = .ElementsRange
     End With
-    
+
 End Sub
 
 
@@ -113,13 +113,17 @@ Private Sub UpdateRanges()
     End With
 
     With this
+        Dim EmptyElements As Integer
+        If .ElementsCounter = 0 Then
+            EmptyElements = 1
+        End If
         Set .ElementsRange = this.ws.Range( _
                 this.ws.Cells(this.row + 1, this.column), _
-                this.ws.Cells(this.row + 1 + .ElementsCounter, this.column + UBound(HeadersComp.values)) _
+                this.ws.Cells(this.row + EmptyElements + .ElementsCounter, this.column + UBound(HeadersComp.values)) _
                 )
         Set .Range = Union( _
                 HeadersComp.Range, _
-                ElementsComp.Range _
+                .ElementsRange _
                 )
     End With
 End Sub
