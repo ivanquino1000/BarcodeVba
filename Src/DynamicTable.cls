@@ -86,9 +86,7 @@ End Sub
 
 Public Sub GetData()
 
-
     On Error GoTo getDataError
-
 
     Dim SourceBook  As Workbook: Set SourceBook = Workbooks.Open(this.SrcBookPath)
     Dim SourceSheet As Worksheet: Set SourceSheet = SourceBook.Worksheets(1)
@@ -122,7 +120,7 @@ Public Sub GetData()
 
         Next cell
         'SourceBook Formating: Sorting + elemCounter Update
-        SrcTabRng.Sort Key1:=SrcTabRng.Columns(1), Order1:=xlAscending, header:=xlYes
+        SrcTabRng.Sort Key1:=SrcTabRng.Columns(1), Order1:=xlAscending, Header:=xlYes
         SrcElemntsCounter = SourceSheet.Cells(SourceSheet.Rows.Count, .CodeCol).End(xlUp).row
         'Save SourceBook Elements to ElementsComp Collection
         Dim items   As New Collection

@@ -36,16 +36,16 @@ End Sub
 
 Public Sub Update(ByVal ws As Worksheet)
     On Error GoTo err
-    Dim header As Variant
+    Dim Header As Variant
     Dim i As Long
-    For Each header In this.values
+    For Each Header In this.values
     
         ws.Cells( _
         this.Range.row, this.Range.column + i _
-                       ).value = header
+                       ).value = Header
 
         i = i + 1
-    Next header
+    Next Header
     Call ApplyFormat(this.Range, this.Format)
     
     Exit Sub

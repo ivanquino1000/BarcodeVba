@@ -27,7 +27,6 @@ Attribute resultsTable.VB_VarHelpID = -1
 Private WithEvents databaseTable As DynamicTable
 Attribute databaseTable.VB_VarHelpID = -1
 
-'hola
 Private Sub Workbook_Open()
     Application.EnableAutoComplete = False
     Application.ScreenUpdating = False
@@ -102,7 +101,37 @@ End Sub
 
 Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
 
+    ' SearchField-Change
     If Not Intersect(Target, searchTable.ElementsRange) Is Nothing Then
+
+        Dim Header, UserInput As String
+        Dim HeaderIndex As Integer
+        With searchTable
+            HeaderIndex = Target.column - .column
+            Header = listTable.ElementsComp.HeaderMap( _
+                    .HeadersComp.values(HeaderIndex) _
+                    )
+            UserInput = Target.value
+        End With
+        
+        Application.EnableEvents = False
+        Select Case Header
+            Case "Code":
+                Target.value = UserInput
+            Case "Name":
+                Target.value = "*" & UserInput
+            Case "SellingPrice":
+                If IsNumeric(UserInput) & UserInput > 50 Then
+                    Target.value = "<" & UserInput
+                Else
+                    Target.value = ">" & UserInput
+                    End If
+            Case Else
+                Debug.Print "User Input: Header Out of Index"
+        End Select
+        Application.EnableEvents = True
+
+        'Fill & Format Results Table
         resultsTable.ClearPrevRange
         Dim Elements As Integer
         databaseTable.Range.AdvancedFilter Action:=xlFilterCopy, _
@@ -115,5 +144,6 @@ Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
 
     End If
 End Sub
+
 
 
