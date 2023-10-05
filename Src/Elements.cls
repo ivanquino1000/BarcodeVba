@@ -89,11 +89,11 @@ Public Sub Update(ByVal ws As Worksheet, ByVal Headers As Variant)
             Next column
             row = row + 1
             
-            Dim elemRange As Range
-            Set elemRange = ws.Range(Cells(Range.row, Range.column), _
+            Dim ElemRange As Range
+            Set ElemRange = ws.Range(Cells(Range.row, Range.column), _
                                      Cells(Range.row, Range.Columns.Count))
             If elem.IsNew Then
-                Call ApplyFormat(elemRange, .NewFormat)
+                Call ApplyFormat(ElemRange, .NewFormat)
             End If
         Next elem
         this.Range.value = ElemArr

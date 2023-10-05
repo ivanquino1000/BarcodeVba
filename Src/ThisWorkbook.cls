@@ -74,19 +74,46 @@ Private Sub Workbook_Open()
 End Sub
 
 
+Private Sub Workbook_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As Range, Cancel As Boolean)
+
+    If Not Intersect(Target, resultsTable.ElementsRange) Is Nothing Then
+
+        'Create a elem Object on reult tab range for id, columns
+        Dim ElemRange, cell As Range
+        With resultsTable
+            Set ElemRange = .ws.Range( _
+                    Cells(Target.row, .column), _
+                    Cells(Target.row, .column + UBound(.HeadersComp.values)) _
+                    )
+            Dim itemObj As New Item
+            Dim i   As Integer
+            For Each cell In ElemRange
+                CallByName itemObj, _
+                        listTable.ElementsComp.HeaderMap( _
+                        .HeadersComp.values(i)), VbLet, cell.value
+                i = i + 1
+            Next cell
+        End With
+        listTable.ElementsComp.values.Add itemObj
+        listTable.Update
+        Cancel = True
+    End If
+End Sub
+
 Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
-    
+
     If Not Intersect(Target, searchTable.ElementsRange) Is Nothing Then
         resultsTable.ClearPrevRange
         Dim Elements As Integer
         databaseTable.Range.AdvancedFilter Action:=xlFilterCopy, _
                 criteriarange:=searchTable.Range, CopyToRange:=resultsTable.HeadersComp.Range, _
                 Unique:=False
-             With resultsTable
+        With resultsTable
             Elements = .ws.Cells(.ws.Rows.Count, .column).End(xlUp).row - .row
         End With
         resultsTable.ElementsCounter = Elements
-        
+
     End If
 End Sub
+
 
