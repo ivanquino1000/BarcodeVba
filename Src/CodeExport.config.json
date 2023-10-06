@@ -1,6 +1,5 @@
 {
 	"Module Paths": {
-		"ThisWorkbook": "ThisWorkbook.cls",
 		"DynamicTable": "DynamicTable.cls",
 		"Headers": "Headers.cls",
 		"Elements": "Elements.cls",
@@ -9,7 +8,10 @@
 		"Item": "Item.cls",
 		"IDataTable": "IDataTable.cls",
 		"StaticTable": "StaticTable.cls",
-		"Project": "Project.bas"
+		"Project": "Project.bas",
+		"Company": "Company.cls",
+		"PrintingForm": "PrintingForm.frm",
+		"ThisWorkbook": "ThisWorkbook.cls"
 	},
 	"References": [
 		{
@@ -34,16 +36,11 @@
 			"Minor": 5
 		},
 		{
-			"Name": "VBAProject",
-			"Description": "",
-			"Path": "C:\\Program Files\\Microsoft Office\\Root\\Office16\\LIBRARY\\Analysis\\FUNCRES.XLAM"
-		},
-		{
-			"Name": "VBIDE",
-			"Description": "Microsoft Visual Basic for Applications Extensibility 5.3",
-			"GUID": "{0002E157-0000-0000-C000-000000000046}",
-			"Major": 5,
-			"Minor": 3
+			"Name": "MSForms",
+			"Description": "Microsoft Forms 2.0 Object Library",
+			"GUID": "{0D452EE1-E08F-101A-852E-02608C4D0BB4}",
+			"Major": 2,
+			"Minor": 0
 		}
 	]
 }
