@@ -13,31 +13,6 @@ Public Sub ApplyFormat(ByVal rng As Range, ByVal Format As FormatSettings)
     
 End Sub
 
-Public Sub CloseAllVBEWindows()
-    Dim wk As Workbook
-    Dim CodeWindow As Variant
-    On Error GoTo err
-    'If VBE is closed the user shall allow it to open first
-    If Application.VBE.MainWindow.Visible = False Then
-        If MsgBox("VBE is still closed!" & vbCrLf & "The operation requires VBE to be open during its process. Would you like to open it?", vbInformation + vbYesNo) = vbYes Then
-            Application.VBE.MainWindow.Visible = True
-        Else
-            Exit Sub
-        End If
-    End If
-    'Then it will close all the windows
-    'Except the Default VBE Windows (Immediate Windows, Locals Windows ...)
-    For Each wk In Application.Workbooks
-        If wk.Name = ThisWorkbook.Name Then
-            For Each CodeWindow In wk.VBProject.VBE.Windows
-                If CodeWindow.Visible = True And CodeWindow.Type = 0 Then CodeWindow.Visible = False
-            Next CodeWindow
-        End If
-    Next wk
-    Exit Sub
-err:
-    Debug.Print err.Description
-End Sub
 
 Function FindLatestXLSXFile(ByVal pathDir As String) As String
 

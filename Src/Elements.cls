@@ -53,6 +53,8 @@ Private Sub Class_Initialize()
             .Add "Costo?", "Cost"
             .Add "xMayor?", "WholeSalePrice"
             .Add "Precio", "SellingPrice"
+            .Add "Cant*Caja", "BoxQty"
+            .Add "Precio*Caja", "BoxPrice"
         End With
     End With
 End Sub
@@ -97,8 +99,9 @@ Public Sub Update(ByVal ws As Worksheet, ByVal Headers As Variant)
             End If
         Next elem
         this.Range.value = ElemArr
-    
+        .Range.EntireRow.RowHeight = 40
     End With
+    
     Set PreviousRange = this.Range
 End Sub
 

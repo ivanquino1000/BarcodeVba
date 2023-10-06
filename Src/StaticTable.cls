@@ -83,6 +83,7 @@ Public Sub Update()
         ElementsUpdate
         .ws.Columns.AutoFit
     End With
+    
 End Sub
 
 Public Sub ClearPrevRange()
@@ -99,7 +100,13 @@ Public Sub ElementsUpdate()
     
     With this
         Call ApplyFormat(.ElementsRange, .ElementsFormat)
+        
+        .ElementsRange.Sort key1:=.ElementsRange.Columns(UBound(HeadersComp.values) + 1), _
+      order1:=xlDescending, Header:=xlNo
+      
         Set .PreviousElemRange = .ElementsRange
+        
+        .Range.EntireRow.RowHeight = 40
     End With
 
 End Sub

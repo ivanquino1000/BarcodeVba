@@ -120,7 +120,7 @@ Public Sub GetData()
 
         Next cell
         'SourceBook Formating: Sorting + elemCounter Update
-        SrcTabRng.Sort Key1:=SrcTabRng.Columns(1), Order1:=xlAscending, Header:=xlYes
+        SrcTabRng.Sort key1:=SrcTabRng.Columns(1), order1:=xlAscending, Header:=xlYes
         SrcElemntsCounter = SourceSheet.Cells(SourceSheet.Rows.Count, .CodeCol).End(xlUp).row
         'Save SourceBook Elements to ElementsComp Collection
         Dim items   As New Collection

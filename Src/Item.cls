@@ -24,9 +24,9 @@ Private Type TItem
     Cost As Double
     WholeSalePrice As Double
     SellingPrice As Double
-    
+    BoxQty As Integer
+    BoxPrice As Double
 End Type
-
 Private this As TItem
 
 Private Sub Class_Initialize()
@@ -39,8 +39,10 @@ Private Sub Class_Initialize()
         .Description = "Empty Desc"
         .Supplier = "Los Incas"
         .Cost = 9.99
-        .WholeSalePrice = 99.99
-        .SellingPrice = 999.99
+        .WholeSalePrice = 999.99
+        .SellingPrice = 9999.99
+        .BoxQty = 24
+        .BoxPrice = 99.99
     End With
 End Sub
 
@@ -123,4 +125,22 @@ End Property
 Public Property Let SellingPrice(ByVal value As Double)
     this.SellingPrice = value
 End Property
+
+
+Public Property Get BoxQty() As Integer
+    BoxQty = this.BoxQty
+End Property
+
+Public Property Let BoxQty(ByVal RHS As Integer)
+    this.BoxQty = RHS
+End Property
+
+Public Property Get BoxPrice() As Double
+    BoxPrice = this.BoxPrice
+End Property
+
+Public Property Let BoxPrice(ByVal RHS As Double)
+    this.BoxPrice = RHS
+End Property
+
 
