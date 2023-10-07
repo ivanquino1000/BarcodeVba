@@ -42,7 +42,9 @@ Private Type TDynamicTable
     TestBookPath    As String
     ws              As Worksheet
     TempBookPath    As String
+    
 End Type
+
 
 Private this        As TDynamicTable
 
@@ -187,6 +189,13 @@ Private Sub UpdateRanges()
                 )
     End With
 End Sub
+Public Sub SearchMissingItem(ByVal CodeLetter As String, ByVal LastCodeId As Integer)
+    If LastCodeId = 0 Then
+    Else
+    End If
+    
+End Sub
+
 
 Private Sub ElementsComp_RangeUpdated()
     UpdateRanges

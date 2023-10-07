@@ -45,6 +45,23 @@ Private Sub Class_Initialize()
         .BoxPrice = 99.99
     End With
 End Sub
+Public Sub Create(ByVal ICode As String, ByVal IName As String, ByVal IDescription As String, _
+                    ByVal ISupplier As String, ByVal ICost As String, ByVal IWholeSalePrice As String, _
+                    ByVal IPrice _
+                    )
+    With this
+        .Code = ICode
+        .Name = IName
+        .Description = IDescription
+        .Supplier = ISupplier
+        .Cost = ICost
+        .WholeSalePrice = IWholeSalePrice
+        .SellingPrice = IPrice
+    End With
+    
+End Sub
+
+
 
 Public Property Get Qty() As Integer
     Qty = this.Qty

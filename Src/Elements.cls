@@ -20,6 +20,8 @@ Private Type TElements
     Format As FormatSettings
     NewFormat As FormatSettings
     HeaderMap As Dictionary
+    CodeId As Dictionay
+    NewCodeId As Dictionary
 End Type
 
 Private this As TElements
@@ -151,7 +153,6 @@ Public Property Get NewFormat() As FormatSettings
 End Property
 
 Public Property Set NewFormat(ByVal RHS As FormatSettings)
-    Set this.NewFormat = RHS
-End Property
+
 
 

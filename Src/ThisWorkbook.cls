@@ -72,30 +72,72 @@ Private Sub Workbook_Open()
     Application.EnableEvents = True
 End Sub
 
-
 Private Sub Workbook_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As Range, Cancel As Boolean)
 
-    If Not Intersect(Target, resultsTable.ElementsRange) Is Nothing Then
+'
+'    '
+'    'Results Elemnts Double Click
+'    '
+'
+'    If Not Intersect(Target, resultsTable.ElementsRange) Is Nothing Then
+'        'Required Ranges
+'        Dim ElemRange, cell As Range
+'        Dim ElemProp As String
+'        Dim ElemPropId As Integer
+'        Dim itemObj As New Item
+'
+'        With resultsTable
+'
+'            ElemPropId = Target.row - .column
+'            ElemProp = listTable.ElementsComp.HeaderMap( _
+'                    .HeadersComp.values(ElemPropId) _
+'                    )
+'            Set ElemRange = .ws.Range( _
+'                    Cells(Target.row, .column), _
+'                    Cells(Target.row, .column + UBound(.HeadersComp.values)) _
+'                    )
+'        End With
+'
+'        With resultsTable
+'            'Item Builder: elemRange Values
+'            Dim i   As Integer
+'            For Each cell In ElemRange
+'                CallByName itemObj, _
+'                        listTable.ElementsComp.HeaderMap( _
+'                        .HeadersComp.values(i)), VbLet, cell.value
+'                i = i + 1
+'            Next cell
+'        End With
+'
+'        'If ElemProp  = Code - Update Code Id on Previous Saved Ids
+'        With listTable
+'            If ElemProp = "Code" Then
+'                Dim CodeLet As String
+'                Dim LetReg As New RegExp
+'                Dim NewCode As String
+'                With regex
+'                    .Global = True
+'                    .IgnoreCase = True
+'                    .Pattern = "\^[a-z,A-Z]+"
+'                    Set CodeLet = .Execute(inputString)
+'                End With
+'                ' Find all matches in the input string
+'                If Not .ElementsComp.LastNewCodeId.Exists(CodeLet) Then
+'
+'                Else
+'
+'                End If
+'                NewCode = CodeLet & _
+'                        .SearchMissingItem(CodeLet, .ElementsComp.LastNewCodeId(CodeLet))
+'
+'            End If
+'            .ElementsComp.values.Add itemObj
+'            .Update
+'
+'        End With
+'
+'        Cancel = True
 
-        'Create a elem Object on reult tab range for id, columns
-        Dim ElemRange, cell As Range
-        With resultsTable
-            Set ElemRange = .ws.Range( _
-                    Cells(Target.row, .column), _
-                    Cells(Target.row, .column + UBound(.HeadersComp.values)) _
-                    )
-            Dim itemObj As New Item
-            Dim i   As Integer
-            For Each cell In ElemRange
-                CallByName itemObj, _
-                        listTable.ElementsComp.HeaderMap( _
-                        .HeadersComp.values(i)), VbLet, cell.value
-                i = i + 1
-            Next cell
-        End With
-        listTable.ElementsComp.values.Add itemObj
-        listTable.Update
-        Cancel = True
     End If
 End Sub
 
@@ -121,11 +163,11 @@ Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
             Case "Name":
                 Target.value = "*" & UserInput
             Case "SellingPrice":
-                If IsNumeric(UserInput) & UserInput > 50 Then
-                    Target.value = "<" & UserInput
-                Else
-                    Target.value = ">" & UserInput
-                    End If
+                '                If IsNumeric(UserInput) & UserInput > 50 Then
+                '                    Target.value = "<" & UserInput
+                '                Else
+                '                    Target.value = ">" & UserInput
+                '                    End If
             Case Else
                 Debug.Print "User Input: Header Out of Index"
         End Select
