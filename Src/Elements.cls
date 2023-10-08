@@ -20,8 +20,8 @@ Private Type TElements
     Format As FormatSettings
     NewFormat As FormatSettings
     HeaderMap As Dictionary
-    CodeId As Dictionay
-    NewCodeId As Dictionary
+    CodeIds As Dictionary
+    NewCodeIds As Dictionary
 End Type
 
 Private this As TElements
@@ -46,6 +46,9 @@ Private Sub Class_Initialize()
             .FontSize = 14
         End With
         Set .HeaderMap = New Dictionary
+        Set .CodeIds = New Dictionary
+        Set .NewCodeIds = New Dictionary
+        
         With .HeaderMap
             .Add "Cant", "Qty"
             .Add "Codigo", "Code"

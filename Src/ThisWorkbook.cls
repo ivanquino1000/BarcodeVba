@@ -156,6 +156,10 @@ Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
             UserInput = Target.value
         End With
 
+        
+        If UserInput = "" Then
+        GoTo FillResults
+        End If
         Application.EnableEvents = False
         Select Case Header
             Case "Code":
@@ -163,17 +167,18 @@ Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
             Case "Name":
                 Target.value = "*" & UserInput
             Case "SellingPrice":
-                '                If IsNumeric(UserInput) & UserInput > 50 Then
-                '                    Target.value = "<" & UserInput
-                '                Else
-                '                    Target.value = ">" & UserInput
-                '                    End If
+                                If IsNumeric(UserInput) & UserInput > 30 Then
+                                    Target.value = "<=" & UserInput
+                                Else
+                                    Target.value = ">=" & UserInput
+                                    End If
             Case Else
                 Debug.Print "User Input: Header Out of Index"
         End Select
         Application.EnableEvents = True
 
         'Fill & Format Results Table
+FillResults:
         resultsTable.ClearPrevRange
         Dim Elements As Integer
         databaseTable.Range.AdvancedFilter Action:=xlFilterCopy, _
