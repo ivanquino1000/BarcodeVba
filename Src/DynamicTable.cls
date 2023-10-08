@@ -42,7 +42,7 @@ Private Type TDynamicTable
     TestBookPath    As String
     ws              As Worksheet
     TempBookPath    As String
-    
+
 End Type
 
 
@@ -86,6 +86,8 @@ Public Sub Init(ByVal row As Integer, _
 
 End Sub
 
+' Executed once per cycle - Improve efficiency
+
 Public Sub GetData()
 
     On Error GoTo getDataError
@@ -115,7 +117,7 @@ Public Sub GetData()
                 .PriceCol & SrcElemntsCounter)
         For Each cell In CodesRng
             If Not IsEmpty(cell.value) Then
-                If Not regex.Test(cell.value) Then
+                If Not regex.test(cell.value) Then
                     cell.value = ""
                 End If
             End If
@@ -124,25 +126,53 @@ Public Sub GetData()
         'SourceBook Formating: Sorting + elemCounter Update
         SrcTabRng.Sort key1:=SrcTabRng.Columns(1), order1:=xlAscending, Header:=xlYes
         SrcElemntsCounter = SourceSheet.Cells(SourceSheet.Rows.Count, .CodeCol).End(xlUp).row
+
         'Save SourceBook Elements to ElementsComp Collection
         Dim items   As New Collection
 
         Dim i       As Integer
         Dim itemObj As Item
+        Dim Code, Name, Price As String
+        Dim IdValues As Variant
+        Dim CurrentKey, PrevKey As String
+        Dim CodeId, TempIdValCount As Integer
+        PrevKey = ExtractLetter(SourceSheet.Cells(i, .CodeCol).value)
+            
         For i = .FirstRow To SrcElemntsCounter
+
+            Code = SourceSheet.Cells(i, .CodeCol).value
+            Name = SourceSheet.Cells(i, .NameCol).value
+            Price = SourceSheet.Cells(i, .PriceCol).value
+            CurrentKey = ExtractLetter(Code)
+            CodeId = ExtractNumber(Code)
             Set itemObj = New Item
+
             With itemObj
-                .Code = SourceSheet.Cells(i, SourceTableRef.CodeCol).value
-                .Name = SourceSheet.Cells(i, SourceTableRef.NameCol).value
-                .SellingPrice = SourceSheet.Cells(i, SourceTableRef.PriceCol).value
+                .Code = Code
+                .Name = Name
+                .SellingPrice = Price
             End With
+            
+            If CurrentKey = PrevKey Then
+                'Push To IdValues
+                TempIdValCount = TempIdValCount + 1
+                ReDim Preserve IdValues(0 To TempIdValCount)
+                IdValues(TempIdValCount - 1) = CodeId
+                PrevKey = CurrentKey
+            Else
+                ElementsComp.values.Add PrevKey, IdValues
+                Erase IdValues
+                IdValues = CodeId
+            End If
+
             items.Add itemObj
+
         Next i
         Set ElementsComp.values = items
 
     End With
     SourceBook.Close True
-    'Update DynamicTable
+    'Update ElementsIds
     Update
     Exit Sub
 getDataError:
@@ -189,12 +219,7 @@ Private Sub UpdateRanges()
                 )
     End With
 End Sub
-Public Sub SearchMissingItem(ByVal CodeLetter As String, ByVal LastCodeId As Integer)
-    If LastCodeId = 0 Then
-    Else
-    End If
-    
-End Sub
+
 
 
 Private Sub ElementsComp_RangeUpdated()

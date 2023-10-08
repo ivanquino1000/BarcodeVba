@@ -138,7 +138,7 @@ Private Sub Workbook_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As 
 '
 '        Cancel = True
 
-    End If
+'    End If
 End Sub
 
 Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
@@ -191,4 +191,5 @@ FillResults:
 
     End If
 End Sub
+
 

@@ -24,7 +24,24 @@ Private Type TElements
     NewCodeIds As Dictionary
 End Type
 
+
 Private this As TElements
+
+Public Property Get CodeIds() As Dictionary
+    Set CodeIds = this.CodeIds
+End Property
+
+Public Property Set CodeIds(ByVal RHS As Dictionary)
+    Set this.CodeIds = RHS
+End Property
+
+Public Property Get NewCodeIds() As Dictionary
+    Set NewCodeIds = this.NewCodeIds
+End Property
+
+Public Property Set NewCodeIds(ByVal RHS As Dictionary)
+    Set this.NewCodeIds = RHS
+End Property
 
 Private Sub Class_Initialize()
     With this
@@ -156,6 +173,7 @@ Public Property Get NewFormat() As FormatSettings
 End Property
 
 Public Property Set NewFormat(ByVal RHS As FormatSettings)
-
+    Set NewFormat = RHS
+    End Property
 
 
