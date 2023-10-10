@@ -127,6 +127,11 @@ Public Sub Update(ByVal ws As Worksheet, ByVal Headers As Variant)
     Set PreviousRange = this.Range
 End Sub
 
+Public Function MissingId(Optional ByVal NewItems As Variant) As Integer
+
+End Function
+
+
 Public Property Get HeaderMap() As Object
     Set HeaderMap = this.HeaderMap
 End Property

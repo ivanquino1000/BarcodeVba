@@ -45,7 +45,21 @@ Sub test()
 
 End Sub
 
-
+Public Function CodeBuilder(ByVal CodeLet As String, ByVal CodeId As Integer) As String
+    Dim Code As String
+    
+    Select Case CodeId
+    Case CodeId < 10
+        Code = CodeLet & "00" & CodeId
+    Case CodeId < 100
+        Code = CodeLet & "0" & CodeId
+    Case Else
+        Code = CodeLet & CodeId
+    End Select
+    
+    CodeBuilder = Code
+    
+End Function
 
 Public Function ExtractNumber(ByVal inputString As String) As Variant
     
@@ -74,7 +88,7 @@ Public Function ExtractLetter(ByVal inputString As String) As Variant
     End With
     
     If LetReg.test(inputString) Then
-        Set ExtractLetter = LetReg.Execute(inputString)(0)
+        ExtractLetter = UCase(LetReg.Execute(inputString)(0))
     Else
         ExtractLetter = "Not Matches Found in Input"
     End If
@@ -118,7 +132,7 @@ Public Function FindMissCodeId(ByVal MainNumArr As Variant, _
     Next i
 
     ' Redimension the array to the actual size
-    ReDim Preserve combinedArray(1 To k - 1)
+    ReDim Preserve combinedArray(1 To k + 1) '- 1)
 
     ' Sort the merged and deduplicated array using Bubble Sort
     combinedArray = BubbleSort(combinedArray)

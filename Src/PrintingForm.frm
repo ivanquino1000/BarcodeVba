@@ -6,7 +6,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} PrintingForm
    ClientTop       =   465
    ClientWidth     =   4560
    OleObjectBlob   =   "PrintingForm.frx":0000
-   StartUpPosition =   1  'Centrar en propietario
+   StartUpPosition =   1  'CenterOwner
 End
 Attribute VB_Name = "PrintingForm"
 Attribute VB_GlobalNameSpace = False
@@ -34,11 +34,11 @@ Private Sub UserForm_Initialize()
     Dim Bussiness_4 As New Company
     Dim Bussiness_5 As New Company
 
-    Bussiness_1.Init "SORAZA", "Octavio Munoz Najar 202", 20608875426#
-    Bussiness_2.Init "G&R", "San Juan de Dios 601A", 1075699791#
-    Bussiness_3.Init "LARICO", "Octavio Munoz Najar 248", 20609183650#
-    Bussiness_4.Init "BENKI", "Teniente Ferre ", 10402036899#
-    Bussiness_5.Init "ALMACEN", "Mercedez Benz Mz F Lt 7", 20608875426#
+    Bussiness_1.init "SORAZA", "Octavio Munoz Najar 202", 20608875426#
+    Bussiness_2.init "G&R", "San Juan de Dios 601A", 1075699791#
+    Bussiness_3.init "LARICO", "Octavio Munoz Najar 248", 20609183650#
+    Bussiness_4.init "BENKI", "Teniente Ferre ", 10402036899#
+    Bussiness_5.init "ALMACEN", "Mercedez Benz Mz F Lt 7", 20608875426#
 
     With CompanyBox
 

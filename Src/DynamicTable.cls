@@ -65,7 +65,7 @@ Private Sub Class_Initialize()
     End With
 End Sub
 
-Public Sub Init(ByVal row As Integer, _
+Public Sub init(ByVal row As Integer, _
         ByVal column As Integer, _
         ByVal ws As Worksheet, _
         ByVal Headers As Variant _
@@ -91,7 +91,10 @@ End Sub
 Public Sub GetData()
 
     On Error GoTo getDataError
-
+    
+    Dim InitTime, EndTime As Double
+    InitTime = Timer
+    
     Dim SourceBook  As Workbook: Set SourceBook = Workbooks.Open(this.SrcBookPath)
     Dim SourceSheet As Worksheet: Set SourceSheet = SourceBook.Worksheets(1)
 
@@ -133,10 +136,10 @@ Public Sub GetData()
         Dim i       As Integer
         Dim itemObj As Item
         Dim Code, Name, Price As String
-        Dim IdValues As Variant
+        Dim IdValues As Variant: IdValues = Array("-1")
         Dim CurrentKey, PrevKey As String
         Dim CodeId, TempIdValCount As Integer
-        PrevKey = ExtractLetter(SourceSheet.Cells(i, .CodeCol).value)
+        PrevKey = ExtractLetter(SourceSheet.Range(.CodeCol & .FirstRow & ":" & .CodeCol & .FirstRow).value)
             
         For i = .FirstRow To SrcElemntsCounter
 
@@ -160,9 +163,12 @@ Public Sub GetData()
                 IdValues(TempIdValCount - 1) = CodeId
                 PrevKey = CurrentKey
             Else
-                ElementsComp.values.Add PrevKey, IdValues
+                ElementsComp.CodeIds.Add PrevKey, IdValues
                 Erase IdValues
-                IdValues = CodeId
+                ReDim IdValues(0 To 0)
+                IdValues(0) = CodeId
+                PrevKey = CurrentKey
+                TempIdValCount = 0
             End If
 
             items.Add itemObj
@@ -172,12 +178,17 @@ Public Sub GetData()
 
     End With
     SourceBook.Close True
+    EndTime = Timer
+    Debug.Print "GetData - Performance:", EndTime - InitTime & " sec"
     'Update ElementsIds
     Update
     Exit Sub
 getDataError:
     Debug.Print "getDataError:  "; err.Description
-
+    If Not SourceBook Is Nothing And SourceSheet.Visible Then
+        SourceBook.Close False
+    End If
+    
 End Sub
 
 Public Sub Update()

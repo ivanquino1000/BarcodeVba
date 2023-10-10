@@ -17,6 +17,10 @@ Const IntroductoryMessage As String = "Welcome to Codebar Printer You will first
         vbNewLine & "      @TEXTO *?*: Datos Opcionales de Relleno" & vbNewLine & _
         vbNewLine & "- Al finalizar enviar y subir los productos creados en esta sesion" & _
         vbNewLine & "-IvanQuino1000"
+Dim InitTime, EndTime As Double
+
+
+
 
 Private WithEvents listTable As DynamicTable
 Attribute listTable.VB_VarHelpID = -1
@@ -31,6 +35,7 @@ Private Sub Workbook_Open()
     Application.EnableAutoComplete = False
     Application.ScreenUpdating = False
     Application.EnableEvents = False
+    
     Dim sheet       As Worksheet
     For Each sheet In Me.Sheets
         With sheet.Cells
@@ -40,30 +45,32 @@ Private Sub Workbook_Open()
         End With
     Next sheet
     'Set & Create Tables
+    InitTime = Timer
 
     Set listTable = New DynamicTable
     Set databaseTable = New DynamicTable
     Set searchTable = New StaticTable
     Set resultsTable = New StaticTable
 
-    listTable.Init 5, 2, ThisWorkbook.Sheets("MainSheet"), _
+    listTable.init 5, 2, ThisWorkbook.Sheets("MainSheet"), _
             Array( _
             "Cant", "Codigo", "Nombre", _
             "Adicional", "Proveedor", "Cant*Caja", "Precio*Caja", _
             "Costo?", "xMayor?", "Precio")
-    databaseTable.Init 1, 1, ThisWorkbook.Sheets("DataSheet"), _
+    databaseTable.init 1, 1, ThisWorkbook.Sheets("DataSheet"), _
             Array( _
             "Codigo", "Nombre", "Precio" _
             )
-    searchTable.Init 2, 15, ThisWorkbook.Sheets("MainSheet"), _
+    searchTable.init 2, 15, ThisWorkbook.Sheets("MainSheet"), _
             Array( _
             "Codigo", "Nombre", "Precio" _
             )
-    resultsTable.Init 5, 15, ThisWorkbook.Sheets("MainSheet"), _
+    resultsTable.init 5, 15, ThisWorkbook.Sheets("MainSheet"), _
             Array( _
             "Codigo", "Nombre", "Precio" _
             )
-
+    EndTime = Timer
+    Debug.Print "UITableBuild- Performance:", EndTime - InitTime & " sec"
 
     databaseTable.GetData
 
@@ -74,7 +81,7 @@ End Sub
 
 Private Sub Workbook_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As Range, Cancel As Boolean)
 
-'
+
 '    '
 '    'Results Elemnts Double Click
 '    '
@@ -98,8 +105,8 @@ Private Sub Workbook_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As 
 '                    )
 '        End With
 '
-'        With resultsTable
 '            'Item Builder: elemRange Values
+'        With resultsTable
 '            Dim i   As Integer
 '            For Each cell In ElemRange
 '                CallByName itemObj, _
@@ -113,31 +120,29 @@ Private Sub Workbook_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As 
 '        With listTable
 '            If ElemProp = "Code" Then
 '                Dim CodeLet As String
-'                Dim LetReg As New RegExp
+'                Dim CodeId As String
 '                Dim NewCode As String
-'                With regex
-'                    .Global = True
-'                    .IgnoreCase = True
-'                    .Pattern = "\^[a-z,A-Z]+"
-'                    Set CodeLet = .Execute(inputString)
-'                End With
+'                CodeLet = ExtractLetter(Target.Value2)
 '                ' Find all matches in the input string
-'                If Not .ElementsComp.LastNewCodeId.Exists(CodeLet) Then
 '
-'                Else
+'                CodeId = databaseTable.ElementsComp.MissingId()
 '
+'
+'                If .ElementsComp.NewCodeIds.Exists(CodeLet) Then
+'                    CodeId = databaseTable.ElementsComp.MissingId( _
+'                            .ElementsComp.NewCodeIds(CodeLet)) ' NewItemArray: Optional
 '                End If
-'                NewCode = CodeLet & _
-'                        .SearchMissingItem(CodeLet, .ElementsComp.LastNewCodeId(CodeLet))
 '
+'                NewCode = CodeBuilder(CodeLet, CodeId)
+'                itemObj.Code = NewCode
 '            End If
-'            .ElementsComp.values.Add itemObj
-'            .Update
 '
 '        End With
 '
+'            .ElementsComp.values.Add itemObj
+'            .Update
 '        Cancel = True
-
+'
 '    End If
 End Sub
 

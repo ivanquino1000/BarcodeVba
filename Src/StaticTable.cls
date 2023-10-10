@@ -56,7 +56,7 @@ Private Sub Class_Initialize()
 
 End Sub
 
-Public Sub Init(ByVal row As Integer, _
+Public Sub init(ByVal row As Integer, _
         ByVal column As Integer, _
         ByVal ws As Worksheet, _
         ByVal Headers As Variant _

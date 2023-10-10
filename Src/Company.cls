@@ -28,7 +28,7 @@ Private Sub Class_Initialize()
     End With
 End Sub
 
-Public Sub Init(ByVal IName As String, ByVal IAddress As String, ByVal IRuc As String)
+Public Sub init(ByVal IName As String, ByVal IAddress As String, ByVal IRuc As String)
     With this
         .Address = IAddress
         .Ruc = IRuc
