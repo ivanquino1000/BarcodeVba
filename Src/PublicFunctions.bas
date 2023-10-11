@@ -14,7 +14,7 @@ Public Sub ApplyFormat(ByVal rng As Range, ByVal Format As FormatSettings)
 End Sub
 
 
-Function BubbleSort(arr() As Double) As Double()
+Function BubbleSort(arr As Variant) As Variant
     Dim i As Long, j As Long
     Dim temp        As Double
     Dim n           As Long
@@ -40,59 +40,66 @@ Sub test()
     Dim arr1, arr2  As Variant
     arr1 = Array(1, 4, 5, 7, 8, 123, 9)
     arr2 = Array(3, 5)
-
+    Dim S, E As Double
+    S = Timer
+    
     arr3 = FindMissCodeId(arr1, arr2)
-
+    
+    E = Timer
+    Debug.Print "Performance - FindMissing:", E - S, "sec"
+    
+    
+    
 End Sub
 
 Public Function CodeBuilder(ByVal CodeLet As String, ByVal CodeId As Integer) As String
-    Dim Code As String
-    
+    Dim Code        As String
+
     Select Case CodeId
-    Case CodeId < 10
-        Code = CodeLet & "00" & CodeId
-    Case CodeId < 100
-        Code = CodeLet & "0" & CodeId
-    Case Else
-        Code = CodeLet & CodeId
+        Case CodeId < 10
+            Code = CodeLet & "00" & CodeId
+        Case CodeId < 100
+            Code = CodeLet & "0" & CodeId
+        Case Else
+            Code = CodeLet & CodeId
     End Select
-    
+
     CodeBuilder = Code
-    
+
 End Function
 
 Public Function ExtractNumber(ByVal inputString As String) As Variant
-    
-    Dim NumReg     As New RegExp
+
+    Dim NumReg      As New RegExp
     With NumReg
         .Global = True
         .IgnoreCase = True
         .Pattern = "^(\w+\d+)"
     End With
-    
+
     If NumReg.test(inputString) Then
         Set ExtractNumber = NumReg.Execute(inputString)(0)
     Else
         ExtractNumber = "Not Matches Found in Input"
     End If
-    
+
 End Function
 
 Public Function ExtractLetter(ByVal inputString As String) As Variant
-    
-    Dim LetReg     As New RegExp
+
+    Dim LetReg      As New RegExp
     With LetReg
         .Global = True
         .IgnoreCase = True
         .Pattern = "^([a-zA-Z]+)"
     End With
-    
+
     If LetReg.test(inputString) Then
         ExtractLetter = UCase(LetReg.Execute(inputString)(0))
     Else
         ExtractLetter = "Not Matches Found in Input"
     End If
-    
+
 End Function
 Public Function FindMissCodeId(ByVal MainNumArr As Variant, _
         Optional ByVal OptionalNumArr As Variant = Empty) As Integer
@@ -102,7 +109,7 @@ Public Function FindMissCodeId(ByVal MainNumArr As Variant, _
         Exit Function
     End If
 
-    Dim combinedArray() As Double
+    Dim combinedArray As Variant
     Dim i As Long, j As Long, k As Long
     Dim isDuplicate As Boolean
 
@@ -112,6 +119,7 @@ Public Function FindMissCodeId(ByVal MainNumArr As Variant, _
     ' Merge both arrays into combinedArray
     For i = LBound(MainNumArr) To UBound(MainNumArr)
         combinedArray(i) = MainNumArr(i)
+
     Next i
 
     k = UBound(MainNumArr) + 1
@@ -132,11 +140,16 @@ Public Function FindMissCodeId(ByVal MainNumArr As Variant, _
     Next i
 
     ' Redimension the array to the actual size
-    ReDim Preserve combinedArray(1 To k + 1) '- 1)
+    ReDim Preserve combinedArray(1 To k)  '- 1)
 
     ' Sort the merged and deduplicated array using Bubble Sort
     combinedArray = BubbleSort(combinedArray)
-
+Dim elem As Integer
+    For elem = 1 To UBound(combinedArray)
+        Debug.Print combinedArray(elem)
+        
+    Next elem
+    
     ' Return the final sorted array
     'MergeAndSortArrays = combinedArray
 
@@ -191,5 +204,6 @@ Function FindLatestXLSXFile(ByVal pathDir As String) As String
     'Debug.Print latestFile
     FindLatestXLSXFile = latestFile
 End Function
+
 
 
