@@ -11,7 +11,9 @@
 		"Project": "Project.bas",
 		"Company": "Company.cls",
 		"PrintingForm": "PrintingForm.frm",
-		"ThisWorkbook": "ThisWorkbook.cls"
+		"ThisWorkbook": "ThisWorkbook.cls",
+		"TestModule1": "TestModule1.bas",
+		"CodebarLabel": "CodebarLabel.cls"
 	},
 	"References": [
 		{
@@ -41,6 +43,13 @@
 			"GUID": "{0D452EE1-E08F-101A-852E-02608C4D0BB4}",
 			"Major": 2,
 			"Minor": 0
+		},
+		{
+			"Name": "VBIDE",
+			"Description": "Microsoft Visual Basic for Applications Extensibility 5.3",
+			"GUID": "{0002E157-0000-0000-C000-000000000046}",
+			"Major": 5,
+			"Minor": 3
 		}
 	]
 }

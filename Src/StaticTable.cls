@@ -27,11 +27,11 @@ Attribute HeadersComp.VB_VarHelpID = -1
 Private Type TStaticTable
     row             As Integer
     column          As Integer
-    Range           As Range
+    range           As range
     ws              As Worksheet
     Headers         As Headers
-    ElementsRange   As Range
-    PreviousElemRange As Range
+    ElementsRange   As range
+    PreviousElemRange As range
     ElementsCounter As Integer
     ElementsFormat  As FormatSettings
 End Type
@@ -106,7 +106,7 @@ Public Sub ElementsUpdate()
       
         Set .PreviousElemRange = .ElementsRange
         
-        .Range.EntireRow.RowHeight = 40
+        .range.EntireRow.RowHeight = 40
     End With
 
 End Sub
@@ -117,7 +117,7 @@ End Sub
 
 Private Sub UpdateRanges()
     With HeadersComp
-        Set .Range = this.ws.Range( _
+        Set .range = this.ws.range( _
                 this.ws.Cells(this.row, this.column), _
                 this.ws.Cells(this.row, this.column + UBound(.values)) _
                 )
@@ -128,12 +128,12 @@ Private Sub UpdateRanges()
         If .ElementsCounter = 0 Then
             EmptyElements = 1
         End If
-        Set .ElementsRange = this.ws.Range( _
+        Set .ElementsRange = this.ws.range( _
                 this.ws.Cells(this.row + 1, this.column), _
                 this.ws.Cells(this.row + EmptyElements + .ElementsCounter, this.column + UBound(HeadersComp.values)) _
                 )
-        Set .Range = Union( _
-                HeadersComp.Range, _
+        Set .range = Union( _
+                HeadersComp.range, _
                 .ElementsRange _
                 )
     End With
@@ -170,20 +170,20 @@ Public Property Set Headers(ByVal RHS As Headers)
     Set this.Headers = RHS
 End Property
 
-Public Property Get ElementsRange() As Range
+Public Property Get ElementsRange() As range
     Set ElementsRange = this.ElementsRange
 End Property
 
-Public Property Set ElementsRange(ByVal RHS As Range)
+Public Property Set ElementsRange(ByVal RHS As range)
     Set this.ElementsRange = RHS
     UpdateRanges
 End Property
 
-Public Property Get PreviousElemRange() As Range
+Public Property Get PreviousElemRange() As range
     Set PreviousElemRange = this.PreviousElemRange
 End Property
 
-Public Property Set PreviousElemRange(ByVal RHS As Range)
+Public Property Set PreviousElemRange(ByVal RHS As range)
     Set this.PreviousElemRange = RHS
 End Property
 
@@ -191,12 +191,12 @@ Public Property Get ElementsCounter() As Integer
     ElementsCounter = this.ElementsCounter
 End Property
 
-Public Property Get Range() As Range
-    Set Range = this.Range
+Public Property Get range() As range
+    Set range = this.range
 End Property
 
-Public Property Set Range(ByVal value As Range)
-    Set this.Range = value
+Public Property Set range(ByVal value As range)
+    Set this.range = value
 End Property
 
 Public Property Get row() As Integer

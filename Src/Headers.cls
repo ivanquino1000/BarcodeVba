@@ -14,7 +14,7 @@ Public Event HeadersUpdated(ByVal Headers As Variant)
 Private Type THeaders
     values As Variant
     Counter As Integer
-    Range As Range
+    range As range
     Format As FormatSettings
 End Type
 
@@ -41,12 +41,12 @@ Public Sub Update(ByVal ws As Worksheet)
     For Each Header In this.values
     
         ws.Cells( _
-        this.Range.row, this.Range.column + i _
+        this.range.row, this.range.column + i _
                        ).value = Header
 
         i = i + 1
     Next Header
-    Call ApplyFormat(this.Range, this.Format)
+    Call ApplyFormat(this.range, this.Format)
     
     Exit Sub
     
@@ -80,12 +80,12 @@ Public Property Let Counter(ByVal RHS As Integer)
     this.Counter = RHS
 End Property
 
-Public Property Get Range() As Range
-    Set Range = this.Range
+Public Property Get range() As range
+    Set range = this.range
 End Property
 
-Public Property Set Range(ByVal RHS As Range)
-    Set this.Range = RHS
+Public Property Set range(ByVal RHS As range)
+    Set this.range = RHS
 End Property
 
 Public Property Get Format() As FormatSettings

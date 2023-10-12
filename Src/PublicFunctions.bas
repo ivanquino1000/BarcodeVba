@@ -1,5 +1,5 @@
 Attribute VB_Name = "PublicFunctions"
-Public Sub ApplyFormat(ByVal rng As Range, ByVal Format As FormatSettings)
+Public Sub ApplyFormat(ByVal rng As range, ByVal Format As FormatSettings)
 
     With rng
         .Interior.Color = Format.BgColor
@@ -9,6 +9,7 @@ Public Sub ApplyFormat(ByVal rng As Range, ByVal Format As FormatSettings)
         .HorizontalAlignment = xlCenter
         .VerticalAlignment = xlCenter
         .Borders.Weight = xlMedium
+        .Borders.LineStyle = xlDashDot
     End With
 
 End Sub
@@ -40,16 +41,16 @@ Sub test()
     Dim arr1, arr2  As Variant
     arr1 = Array(1, 4, 5, 7, 8, 123, 9)
     arr2 = Array(3, 5)
-    Dim S, E As Double
+    Dim S, E        As Double
     S = Timer
-    
+
     arr3 = FindMissCodeId(arr1, arr2)
-    
+
     E = Timer
     Debug.Print "Performance - FindMissing:", E - S, "sec"
-    
-    
-    
+
+
+
 End Sub
 
 Public Function CodeBuilder(ByVal CodeLet As String, ByVal CodeId As Integer) As String
@@ -101,29 +102,34 @@ Public Function ExtractLetter(ByVal inputString As String) As Variant
     End If
 
 End Function
-Public Function FindMissCodeId(ByVal MainNumArr As Variant, _
-        Optional ByVal OptionalNumArr As Variant = Empty) As Integer
+'Deletes Duplicates
+Public Function JoinArrays(ByVal MainNumArr As Variant, _
+        ByVal OptionalNumArr As Variant) As Variant
 
     If IsEmpty(MainNumArr) Then
         FindMissCodeId = 0
         Exit Function
     End If
 
-    Dim combinedArray As Variant
+    Dim CombinedArray As Variant
     Dim i As Long, j As Long, k As Long
     Dim isDuplicate As Boolean
 
     ' Determine the size of the combined array
-    ReDim combinedArray(0 To UBound(MainNumArr) + UBound(OptionalNumArr) + 1)
+    ReDim CombinedArray(0 To UBound(MainNumArr) + UBound(OptionalNumArr) + 1)
 
     ' Merge both arrays into combinedArray
+    
+    
+    'Copy InitialArray to CombinedArray
     For i = LBound(MainNumArr) To UBound(MainNumArr)
-        combinedArray(i) = MainNumArr(i)
+        CombinedArray(i) = MainNumArr(i)
 
     Next i
-
+    'Next IdElem after MainArrayCopied / Unique Elem Counter
     k = UBound(MainNumArr) + 1
 
+    'Duplicates Deletion
     For i = LBound(OptionalNumArr) To UBound(OptionalNumArr)
         isDuplicate = False
         For j = LBound(MainNumArr) To UBound(MainNumArr)
@@ -134,48 +140,29 @@ Public Function FindMissCodeId(ByVal MainNumArr As Variant, _
         Next j
 
         If Not isDuplicate Then
-            combinedArray(k) = OptionalNumArr(i)
+            CombinedArray(k) = OptionalNumArr(i)
             k = k + 1
         End If
     Next i
 
     ' Redimension the array to the actual size
-    ReDim Preserve combinedArray(1 To k)  '- 1)
+    ReDim Preserve CombinedArray(1 To k)  '- 1)
+    JoinArrays = CombinedArray
+End Function
+Public Function FindMissing(ByVal MainNumArr As Variant, _
+        Optional ByVal OptionalNumArr As Variant = Empty) As Integer
 
+    Dim CombinedArray As Variant
     ' Sort the merged and deduplicated array using Bubble Sort
-    combinedArray = BubbleSort(combinedArray)
-Dim elem As Integer
-    For elem = 1 To UBound(combinedArray)
-        Debug.Print combinedArray(elem)
-        
-    Next elem
-    
-    ' Return the final sorted array
-    'MergeAndSortArrays = combinedArray
+    CombinedArray = BubbleSort(JoinArrays())
+    Dim elem        As Integer
+    For elem = 1 To UBound(CombinedArray)
+        Debug.Print CombinedArray(elem)
 
-    '    Dim FixedNumArr As Variant
-    '    'Join - Sort Arr Process
-    '    If Not IsEmpty(OptionalNumArr) Then
-    '        'New Arr Index
-    '        Dim i, j    As Integer
-    '        'New Arr Index
-    '        Dim l, m, h As Integer
-    '        'Initial Main Array Index
-    '        Dim initMax As Integer
-    '        initMax = UBound(MainNumArr)
-    '        l = LBound(MainNumArr)
-    '        m = UBound(MainNumArr) + 1
-    '        h = UBound(MainNumArr) + UBound(OptionalNumArr) + 1
-    '        i = m
-    '        ReDim Preserve MainNumArr(l To h)
-    '
-    '        Do While i <= h
-    '            MainNumArr(i) = OptionalNumArr(j)
-    '            i = i + 1
-    '            j = j + 1
-    '        Loop
-    '        MainNumArr = BubbleSort(MainNumArr)
-    '    End If
+    Next elem
+    ' Iterate for First Missing Id
+    For i = LBound(CombinedArray) To UBound(CombinedArray)
+    Next i
 
 End Function
 

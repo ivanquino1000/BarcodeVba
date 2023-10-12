@@ -19,7 +19,8 @@ Const IntroductoryMessage As String = "Welcome to Codebar Printer You will first
         vbNewLine & "-IvanQuino1000"
 Dim InitTime, EndTime As Double
 
-
+Public PrinterName As String
+ 
 
 
 Private WithEvents listTable As DynamicTable
@@ -79,7 +80,7 @@ Private Sub Workbook_Open()
     Application.EnableEvents = True
 End Sub
 
-Private Sub Workbook_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As Range, Cancel As Boolean)
+Private Sub Workbook_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As range, Cancel As Boolean)
 
 
 '    '
@@ -146,7 +147,7 @@ Private Sub Workbook_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As 
 '    End If
 End Sub
 
-Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
+Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As range)
 
     ' SearchField-Change
     If Not Intersect(Target, searchTable.ElementsRange) Is Nothing Then
@@ -186,8 +187,8 @@ Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
 FillResults:
         resultsTable.ClearPrevRange
         Dim Elements As Integer
-        databaseTable.Range.AdvancedFilter Action:=xlFilterCopy, _
-                criteriarange:=searchTable.Range, CopyToRange:=resultsTable.HeadersComp.Range, _
+        databaseTable.range.AdvancedFilter Action:=xlFilterCopy, _
+                criteriarange:=searchTable.range, CopyToRange:=resultsTable.HeadersComp.range, _
                 Unique:=False
         With resultsTable
             Elements = .ws.Cells(.ws.Rows.Count, .column).End(xlUp).row - .row
@@ -196,5 +197,7 @@ FillResults:
 
     End If
 End Sub
+
+
 
 

@@ -36,7 +36,7 @@ Private SourceTableRef As SourceTab
 Private Type TDynamicTable
     row             As Integer
     column          As Integer
-    Range           As Range
+    range           As range
     SrcBookPath     As String
     NewItemsBookPath As String
     TestBookPath    As String
@@ -111,11 +111,13 @@ Public Sub GetData()
 
     With SourceTableRef
         SrcElemntsCounter = SourceSheet.Cells(SourceSheet.Rows.Count, .CodeCol).End(xlUp).row
-        Dim CodesRng, SrcTabRng, cell As Range
-        Set CodesRng = SourceSheet.Range( _
+        
+        Dim CodesRng, SrcTabRng, cell As range
+        
+        Set CodesRng = SourceSheet.range( _
                 .CodeCol & .FirstRow & ":" & _
                 .CodeCol & SrcElemntsCounter)
-        Set SrcTabRng = SourceSheet.Range( _
+        Set SrcTabRng = SourceSheet.range( _
                 .CodeCol & .FirstRow & ":" & _
                 .PriceCol & SrcElemntsCounter)
         For Each cell In CodesRng
@@ -130,16 +132,16 @@ Public Sub GetData()
         SrcTabRng.Sort key1:=SrcTabRng.Columns(1), order1:=xlAscending, Header:=xlYes
         SrcElemntsCounter = SourceSheet.Cells(SourceSheet.Rows.Count, .CodeCol).End(xlUp).row
 
-        'Save SourceBook Elements to ElementsComp Collection
+        'Save SourceBook Elements to ElementsComp Collection - Dictionary
         Dim items   As New Collection
-
-        Dim i       As Integer
-        Dim itemObj As Item
+        Dim IdValuesMap As New Dictionary
+        Dim i       As Long
+        Dim ItemObj As Item
         Dim Code, Name, Price As String
         Dim IdValues As Variant: IdValues = Array("-1")
         Dim CurrentKey, PrevKey As String
-        Dim CodeId, TempIdValCount As Integer
-        PrevKey = ExtractLetter(SourceSheet.Range(.CodeCol & .FirstRow & ":" & .CodeCol & .FirstRow).value)
+        Dim CodeId, TempIdValCount As Long
+        PrevKey = ExtractLetter(SourceSheet.range(.CodeCol & .FirstRow & ":" & .CodeCol & .FirstRow).value)
             
         For i = .FirstRow To SrcElemntsCounter
 
@@ -148,34 +150,34 @@ Public Sub GetData()
             Price = SourceSheet.Cells(i, .PriceCol).value
             CurrentKey = ExtractLetter(Code)
             CodeId = ExtractNumber(Code)
-            Set itemObj = New Item
+            Set ItemObj = New Item
 
-            With itemObj
+            With ItemObj
                 .Code = Code
                 .Name = Name
                 .SellingPrice = Price
             End With
-            
+            'Match CodeKey to previous - Push to IdValues[]
             If CurrentKey = PrevKey Then
                 'Push To IdValues
                 TempIdValCount = TempIdValCount + 1
                 ReDim Preserve IdValues(0 To TempIdValCount)
                 IdValues(TempIdValCount - 1) = CodeId
                 PrevKey = CurrentKey
-            Else
-                ElementsComp.CodeIds.Add PrevKey, IdValues
-                Erase IdValues
-                ReDim IdValues(0 To 0)
+            Else 'Unmatching CodeKeys - Store PrevKey,IdValues[] - Reset IdValues - Init CodeId
+                'ElementsComp.CodeIds.Add PrevKey, IdValues
+                IdValuesMap.Add PrevKey, IdValues
+                ReDim IdValues(0 To 0) 'Erase IdValues
                 IdValues(0) = CodeId
                 PrevKey = CurrentKey
                 TempIdValCount = 0
             End If
 
-            items.Add itemObj
+            items.Add ItemObj
 
         Next i
         Set ElementsComp.values = items
-
+        Set ElementsComp.CodeIds = IdValuesMap
     End With
     SourceBook.Close True
     EndTime = Timer
@@ -207,7 +209,7 @@ End Sub
 Private Sub UpdateRanges()
 
     With HeadersComp
-        Set .Range = this.ws.Range( _
+        Set .range = this.ws.range( _
                 this.ws.Cells(this.row, this.column), _
                 this.ws.Cells(this.row, this.column + UBound(.values)) _
                 )
@@ -218,19 +220,35 @@ Private Sub UpdateRanges()
         If .values.Count = 0 Then
             EmptyElements = 1
         End If
-        Set .Range = this.ws.Range( _
+        Set .range = this.ws.range( _
                 this.ws.Cells(this.row + 1, this.column), _
                 this.ws.Cells(this.row + EmptyElements + .values.Count, this.column + UBound(HeadersComp.values)) _
                 )
     End With
     With this
-        Set .Range = Union( _
-                HeadersComp.Range, _
-                ElementsComp.Range _
+        Set .range = Union( _
+                HeadersComp.range, _
+                ElementsComp.range _
                 )
     End With
 End Sub
 
+Private Sub PrintTest()
+    Dim printingRange As range
+    Dim Label As New CodebarLabel
+    Dim row, column As Integer
+    'Dim LabelRange As Range
+    Label.Build()
+    Set printingRange = Label.range
+    
+    
+    
+    
+    printingRange.PrintOut Copies:=1, Preview:=True, ActivePrinter:=PrinterName
+End Sub
+Private Sub PrintList()
+    
+End Sub
 
 
 Private Sub ElementsComp_RangeUpdated()
@@ -259,12 +277,12 @@ Public Property Let column(ByVal value As Integer)
     UpdateRanges
 End Property
 
-Public Property Get Range() As Range
-    Set Range = this.Range
+Public Property Get range() As range
+    Set range = this.range
 End Property
 
-Public Property Set Range(ByVal value As Range)
-    Set this.Range = value
+Public Property Set range(ByVal value As range)
+    Set this.range = value
 End Property
 
 Public Property Get SrcBookPath() As String

@@ -11,12 +11,12 @@ Option Explicit
 
 Public Event ValuesUpdated(ByVal values As Collection)
 
-Private PreviousRange As Range
+Private PreviousRange As range
 
 Private Type TElements
     values As Collection
     Counter As Integer
-    Range As Range
+    range As range
     Format As FormatSettings
     NewFormat As FormatSettings
     HeaderMap As Dictionary
@@ -94,7 +94,7 @@ Public Sub Update(ByVal ws As Worksheet, ByVal Headers As Variant)
     
         
 'Show Elemts.values and Special Formating
-    Call ApplyFormat(this.Range, this.Format)
+    Call ApplyFormat(this.range, this.Format)
     
     With this
         If .values.Count = 0 Or UBound(Headers) = 0 Then
@@ -113,18 +113,18 @@ Public Sub Update(ByVal ws As Worksheet, ByVal Headers As Variant)
             Next column
             row = row + 1
             
-            Dim ElemRange As Range
-            Set ElemRange = ws.Range(Cells(Range.row, Range.column), _
-                                     Cells(Range.row, Range.Columns.Count))
+            Dim ElemRange As range
+            Set ElemRange = ws.range(Cells(range.row, range.column), _
+                                     Cells(range.row, range.Columns.Count))
             If elem.IsNew Then
                 Call ApplyFormat(ElemRange, .NewFormat)
             End If
         Next elem
-        this.Range.value = ElemArr
-        .Range.EntireRow.RowHeight = 40
+        this.range.value = ElemArr
+        .range.EntireRow.RowHeight = 40
     End With
     
-    Set PreviousRange = this.Range
+    Set PreviousRange = this.range
 End Sub
 
 Public Function MissingId(Optional ByVal NewItems As Variant) As Integer
@@ -157,12 +157,12 @@ Public Property Let Counter(ByVal RHS As Integer)
     this.Counter = RHS
 End Property
 
-Public Property Get Range() As Range
-    Set Range = this.Range
+Public Property Get range() As range
+    Set range = this.range
 End Property
 
-Public Property Set Range(ByVal RHS As Range)
-    Set this.Range = RHS
+Public Property Set range(ByVal RHS As range)
+    Set this.range = RHS
 End Property
 
 Public Property Get Format() As FormatSettings
