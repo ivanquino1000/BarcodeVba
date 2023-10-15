@@ -29,7 +29,7 @@ Private Type TItem
 End Type
 Private this As TItem
 
-Private Sub Class_Initialize()
+Private Sub class_initialize()
     With this
         .Id = 0
         .Qty = 1

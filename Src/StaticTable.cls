@@ -25,8 +25,8 @@ Public WithEvents HeadersComp As Headers
 Attribute HeadersComp.VB_VarHelpID = -1
 
 Private Type TStaticTable
-    row             As Integer
-    column          As Integer
+    Row             As Integer
+    Column          As Integer
     range           As range
     ws              As Worksheet
     Headers         As Headers
@@ -38,10 +38,10 @@ End Type
 Private this        As TStaticTable
 
 
-Private Sub Class_Initialize()
+Private Sub class_initialize()
     With this
-        .row = 1
-        .column = 1
+        .Row = 1
+        .Column = 1
 
         Set .ws = ThisWorkbook.ActiveSheet
         Set .ElementsFormat = New FormatSettings
@@ -56,14 +56,14 @@ Private Sub Class_Initialize()
 
 End Sub
 
-Public Sub init(ByVal row As Integer, _
-        ByVal column As Integer, _
+Public Sub init(ByVal Row As Integer, _
+        ByVal Column As Integer, _
         ByVal ws As Worksheet, _
         ByVal Headers As Variant _
         )
     With this
-        .row = row
-        .column = column
+        .Row = Row
+        .Column = Column
         Set .ws = ws
         With HeadersComp
             .values = Headers
@@ -118,8 +118,8 @@ End Sub
 Private Sub UpdateRanges()
     With HeadersComp
         Set .range = this.ws.range( _
-                this.ws.Cells(this.row, this.column), _
-                this.ws.Cells(this.row, this.column + UBound(.values)) _
+                this.ws.Cells(this.Row, this.Column), _
+                this.ws.Cells(this.Row, this.Column + UBound(.values)) _
                 )
     End With
 
@@ -129,8 +129,8 @@ Private Sub UpdateRanges()
             EmptyElements = 1
         End If
         Set .ElementsRange = this.ws.range( _
-                this.ws.Cells(this.row + 1, this.column), _
-                this.ws.Cells(this.row + EmptyElements + .ElementsCounter, this.column + UBound(HeadersComp.values)) _
+                this.ws.Cells(this.Row + 1, this.Column), _
+                this.ws.Cells(this.Row + EmptyElements + .ElementsCounter, this.Column + UBound(HeadersComp.values)) _
                 )
         Set .range = Union( _
                 HeadersComp.range, _
@@ -145,14 +145,14 @@ Private Sub HeadersComp_HeadersUpdated(ByVal Headers As Variant)
     UpdateRanges
 End Sub
 
-Public Property Let row(ByVal value As Integer)
-    this.row = value
+Public Property Let Row(ByVal value As Integer)
+    this.Row = value
     UpdateRanges
 End Property
 
 
-Public Property Let column(ByVal value As Integer)
-    this.column = value
+Public Property Let Column(ByVal value As Integer)
+    this.Column = value
     UpdateRanges
 End Property
 
@@ -199,8 +199,8 @@ Public Property Set range(ByVal value As range)
     Set this.range = value
 End Property
 
-Public Property Get row() As Integer
-    row = this.row
+Public Property Get Row() As Integer
+    Row = this.Row
 End Property
 
 
@@ -213,8 +213,8 @@ Public Property Set ws(ByVal value As Worksheet)
     Set this.ws = value
 End Property
 
-Public Property Get column() As Integer
-    column = this.column
+Public Property Get Column() As Integer
+    Column = this.Column
 End Property
 
 

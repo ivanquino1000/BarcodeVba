@@ -34,8 +34,8 @@ End Type
 Private SourceTableRef As SourceTab
 
 Private Type TDynamicTable
-    row             As Integer
-    column          As Integer
+    Row             As Integer
+    Column          As Integer
     range           As range
     SrcBookPath     As String
     NewItemsBookPath As String
@@ -48,10 +48,10 @@ End Type
 
 Private this        As TDynamicTable
 
-Private Sub Class_Initialize()
+Private Sub class_initialize()
     With this
-        .row = 1
-        .column = 1
+        .Row = 1
+        .Column = 1
 
         Set .ws = ThisWorkbook.ActiveSheet
     End With
@@ -65,14 +65,14 @@ Private Sub Class_Initialize()
     End With
 End Sub
 
-Public Sub init(ByVal row As Integer, _
-        ByVal column As Integer, _
+Public Sub init(ByVal Row As Integer, _
+        ByVal Column As Integer, _
         ByVal ws As Worksheet, _
         ByVal Headers As Variant _
         )
     With this
-        .row = row
-        .column = column
+        .Row = Row
+        .Column = Column
         Set .ws = ws
         .SrcBookPath = FindLatestXLSXFile(Environ("USERPROFILE") & "\Downloads\")
         .NewItemsBookPath = Environ("USERPROFILE") & "\Documents\IMPORT" & "Items.xlsx"
@@ -110,7 +110,7 @@ Public Sub GetData()
     'Clear Not Matching Codes
 
     With SourceTableRef
-        SrcElemntsCounter = SourceSheet.Cells(SourceSheet.Rows.Count, .CodeCol).End(xlUp).row
+        SrcElemntsCounter = SourceSheet.Cells(SourceSheet.Rows.Count, .CodeCol).End(xlUp).Row
         
         Dim CodesRng, SrcTabRng, cell As range
         
@@ -130,15 +130,15 @@ Public Sub GetData()
         Next cell
         'SourceBook Formating: Sorting + elemCounter Update
         SrcTabRng.Sort key1:=SrcTabRng.Columns(1), order1:=xlAscending, Header:=xlYes
-        SrcElemntsCounter = SourceSheet.Cells(SourceSheet.Rows.Count, .CodeCol).End(xlUp).row
+        SrcElemntsCounter = SourceSheet.Cells(SourceSheet.Rows.Count, .CodeCol).End(xlUp).Row
 
         'Save SourceBook Elements to ElementsComp Collection - Dictionary
-        Dim items   As New Collection
+        Dim items   As New collection
         Dim IdValuesMap As New Dictionary
         Dim i       As Long
         Dim ItemObj As Item
         Dim Code, Name, Price As String
-        Dim IdValues As Variant: IdValues = Array("-1")
+        Dim IdValues As Variant: IdValues = array("-1")
         Dim CurrentKey, PrevKey As String
         Dim CodeId, TempIdValCount As Long
         PrevKey = ExtractLetter(SourceSheet.range(.CodeCol & .FirstRow & ":" & .CodeCol & .FirstRow).value)
@@ -166,14 +166,14 @@ Public Sub GetData()
                 PrevKey = CurrentKey
             Else 'Unmatching CodeKeys - Store PrevKey,IdValues[] - Reset IdValues - Init CodeId
                 'ElementsComp.CodeIds.Add PrevKey, IdValues
-                IdValuesMap.Add PrevKey, IdValues
+                IdValuesMap.add PrevKey, IdValues
                 ReDim IdValues(0 To 0) 'Erase IdValues
                 IdValues(0) = CodeId
                 PrevKey = CurrentKey
                 TempIdValCount = 0
             End If
 
-            items.Add ItemObj
+            items.add ItemObj
 
         Next i
         Set ElementsComp.values = items
@@ -210,8 +210,8 @@ Private Sub UpdateRanges()
 
     With HeadersComp
         Set .range = this.ws.range( _
-                this.ws.Cells(this.row, this.column), _
-                this.ws.Cells(this.row, this.column + UBound(.values)) _
+                this.ws.Cells(this.Row, this.Column), _
+                this.ws.Cells(this.Row, this.Column + UBound(.values)) _
                 )
     End With
 
@@ -221,8 +221,8 @@ Private Sub UpdateRanges()
             EmptyElements = 1
         End If
         Set .range = this.ws.range( _
-                this.ws.Cells(this.row + 1, this.column), _
-                this.ws.Cells(this.row + EmptyElements + .values.Count, this.column + UBound(HeadersComp.values)) _
+                this.ws.Cells(this.Row + 1, this.Column), _
+                this.ws.Cells(this.Row + EmptyElements + .values.Count, this.Column + UBound(HeadersComp.values)) _
                 )
     End With
     With this
@@ -236,7 +236,7 @@ End Sub
 Private Sub PrintTest()
     Dim printingRange As range
     Dim Label As New CodebarLabel
-    Dim row, column As Integer
+    Dim Row, Column As Integer
     'Dim LabelRange As Range
     Label.Build()
     Set printingRange = Label.range
@@ -259,21 +259,21 @@ Private Sub HeadersComp_HeadersUpdated(ByVal Headers As Variant)
     UpdateRanges
 End Sub
 
-Public Property Get row() As Integer
-    row = this.row
+Public Property Get Row() As Integer
+    Row = this.Row
 End Property
 
-Public Property Let row(ByVal value As Integer)
-    this.row = value
+Public Property Let Row(ByVal value As Integer)
+    this.Row = value
     UpdateRanges
 End Property
 
-Public Property Get column() As Integer
-    column = this.column
+Public Property Get Column() As Integer
+    Column = this.Column
 End Property
 
-Public Property Let column(ByVal value As Integer)
-    this.column = value
+Public Property Let Column(ByVal value As Integer)
+    this.Column = value
     UpdateRanges
 End Property
 

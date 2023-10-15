@@ -38,7 +38,7 @@ Private Sub Workbook_Open()
     Application.EnableEvents = False
     
     Dim sheet       As Worksheet
-    For Each sheet In Me.Sheets
+    For Each sheet In Me.sheets
         With sheet.Cells
             .ClearContents
             .ClearFormats
@@ -53,21 +53,21 @@ Private Sub Workbook_Open()
     Set searchTable = New StaticTable
     Set resultsTable = New StaticTable
 
-    listTable.init 5, 2, ThisWorkbook.Sheets("MainSheet"), _
-            Array( _
+    listTable.init 5, 2, ThisWorkbook.sheets("MainSheet"), _
+            array( _
             "Cant", "Codigo", "Nombre", _
             "Adicional", "Proveedor", "Cant*Caja", "Precio*Caja", _
             "Costo?", "xMayor?", "Precio")
-    databaseTable.init 1, 1, ThisWorkbook.Sheets("DataSheet"), _
-            Array( _
+    databaseTable.init 1, 1, ThisWorkbook.sheets("DataSheet"), _
+            array( _
             "Codigo", "Nombre", "Precio" _
             )
-    searchTable.init 2, 15, ThisWorkbook.Sheets("MainSheet"), _
-            Array( _
+    searchTable.init 2, 15, ThisWorkbook.sheets("MainSheet"), _
+            array( _
             "Codigo", "Nombre", "Precio" _
             )
-    resultsTable.init 5, 15, ThisWorkbook.Sheets("MainSheet"), _
-            Array( _
+    resultsTable.init 5, 15, ThisWorkbook.sheets("MainSheet"), _
+            array( _
             "Codigo", "Nombre", "Precio" _
             )
     EndTime = Timer
@@ -75,7 +75,7 @@ Private Sub Workbook_Open()
 
     databaseTable.GetData
 
-    ThisWorkbook.Sheets("MainSheet").Select
+    ThisWorkbook.sheets("MainSheet").Select
     Application.ScreenUpdating = True
     Application.EnableEvents = True
 End Sub
@@ -155,7 +155,7 @@ Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As range)
         Dim Header, UserInput As String
         Dim HeaderIndex As Integer
         With searchTable
-            HeaderIndex = Target.column - .column
+            HeaderIndex = Target.Column - .Column
             Header = listTable.ElementsComp.HeaderMap( _
                     .HeadersComp.values(HeaderIndex) _
                     )
@@ -191,12 +191,13 @@ FillResults:
                 criteriarange:=searchTable.range, CopyToRange:=resultsTable.HeadersComp.range, _
                 Unique:=False
         With resultsTable
-            Elements = .ws.Cells(.ws.Rows.Count, .column).End(xlUp).row - .row
+            Elements = .ws.Cells(.ws.Rows.Count, .Column).End(xlUp).Row - .Row
         End With
         resultsTable.ElementsCounter = Elements
 
     End If
 End Sub
+
 
 
 

@@ -20,9 +20,9 @@ End Type
 
 Private this As THeaders
 
-Private Sub Class_Initialize()
+Private Sub class_initialize()
     With this
-        .values = Array("Head 1", "Head 2", "Head 3")
+        .values = array("Head 1", "Head 2", "Head 3")
         Set .Format = New FormatSettings
         .Counter = 1
         With .Format
@@ -41,7 +41,7 @@ Public Sub Update(ByVal ws As Worksheet)
     For Each Header In this.values
     
         ws.Cells( _
-        this.range.row, this.range.column + i _
+        this.range.Row, this.range.Column + i _
                        ).value = Header
 
         i = i + 1

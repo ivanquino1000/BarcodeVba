@@ -15,16 +15,16 @@ Private Type TCompany
     Address As String
     Name As String
     Ruc As String
-    Email as string 
-    Phone as string
-    facebook as string
+    Email As String
+    Phone As String
+    facebook As String
 
 End Type
 
 Private this As TCompany
 
 
-Private Sub Class_Initialize()
+Private Sub class_initialize()
     With this
         .Address = "Octavio Mu�oz Najar 202"
         .Name = "SORAZA"

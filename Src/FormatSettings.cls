@@ -7,8 +7,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-VERSION 1.0 CLASS
+
 Option Explicit
+
 
 Private Type TFormatSettings
     BgColor As Long
@@ -27,7 +28,7 @@ Private this As TFormatSettings
 
 Public Event DataInitialized(ByVal BgColor As Long, ByVal FontColor As Long, ByVal FontSize As Long, ByVal FontName As String)
 
-Private Sub Class_Initialize()
+Private Sub class_initialize()
     With this
         .BgColor = RGB(112, 88, 124)
         .Bold = False
@@ -41,6 +42,9 @@ Private Sub Class_Initialize()
         .VAlign = xlCenter
     End With
 End Sub
+
+
+
 
 Public Property Get BgColor() As Long
     BgColor = this.BgColor

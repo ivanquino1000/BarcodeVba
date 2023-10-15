@@ -9,12 +9,12 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Public Event ValuesUpdated(ByVal values As Collection)
+Public Event ValuesUpdated(ByVal values As collection)
 
 Private PreviousRange As range
 
 Private Type TElements
-    values As Collection
+    values As collection
     Counter As Integer
     range As range
     Format As FormatSettings
@@ -43,9 +43,9 @@ Public Property Set NewCodeIds(ByVal RHS As Dictionary)
     Set this.NewCodeIds = RHS
 End Property
 
-Private Sub Class_Initialize()
+Private Sub class_initialize()
     With this
-        Set .values = New Collection
+        Set .values = New collection
         Set .Format = New FormatSettings
         Set .NewFormat = New FormatSettings
         .Counter = .values.Count
@@ -67,16 +67,16 @@ Private Sub Class_Initialize()
         Set .NewCodeIds = New Dictionary
         
         With .HeaderMap
-            .Add "Cant", "Qty"
-            .Add "Codigo", "Code"
-            .Add "Nombre", "Name"
-            .Add "Adicional", "Description"
-            .Add "Proveedor", "Supplier"
-            .Add "Costo?", "Cost"
-            .Add "xMayor?", "WholeSalePrice"
-            .Add "Precio", "SellingPrice"
-            .Add "Cant*Caja", "BoxQty"
-            .Add "Precio*Caja", "BoxPrice"
+            .add "Cant", "Qty"
+            .add "Codigo", "Code"
+            .add "Nombre", "Name"
+            .add "Adicional", "Description"
+            .add "Proveedor", "Supplier"
+            .add "Costo?", "Cost"
+            .add "xMayor?", "WholeSalePrice"
+            .add "Precio", "SellingPrice"
+            .add "Cant*Caja", "BoxQty"
+            .add "Precio*Caja", "BoxPrice"
         End With
     End With
 End Sub
@@ -103,19 +103,19 @@ Public Sub Update(ByVal ws As Worksheet, ByVal Headers As Variant)
         ReDim ElemArr(1 To .values.Count, 0 To UBound(Headers))
         Dim elem As Object
     
-        Dim row, column As Integer: row = 1
+        Dim Row, Column As Integer: Row = 1
         For Each elem In .values
             
-            For column = 0 To UBound(Headers)
+            For Column = 0 To UBound(Headers)
                 
-                ElemArr(row, column) = CallByName(elem, HeaderMap(Headers(column)), VbGet)
+                ElemArr(Row, Column) = CallByName(elem, HeaderMap(Headers(Column)), VbGet)
                 
-            Next column
-            row = row + 1
+            Next Column
+            Row = Row + 1
             
             Dim ElemRange As range
-            Set ElemRange = ws.range(Cells(range.row, range.column), _
-                                     Cells(range.row, range.Columns.Count))
+            Set ElemRange = ws.range(Cells(range.Row, range.Column), _
+                                     Cells(range.Row, range.Columns.Count))
             If elem.IsNew Then
                 Call ApplyFormat(ElemRange, .NewFormat)
             End If
@@ -140,11 +140,11 @@ Public Property Set HeaderMap(ByVal RHS As Object)
     Set this.HeaderMap = RHS
 End Property
 
-Public Property Get values() As Collection
+Public Property Get values() As collection
     Set values = this.values
 End Property
 
-Public Property Set values(ByVal RHS As Collection)
+Public Property Set values(ByVal RHS As collection)
     Set this.values = RHS
     RaiseEvent ValuesUpdated(this.values)
 End Property

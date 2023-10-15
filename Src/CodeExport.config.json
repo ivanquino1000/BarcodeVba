@@ -13,7 +13,9 @@
 		"StaticTable": "StaticTable.cls",
 		"Project": "Project.bas",
 		"Company": "Company.cls",
-		"PosSettings": "PosSettings.cls"
+		"PosSettings": "PosSettings.cls",
+		"Label": "Label.cls",
+		"Model": "Model.cls"
 	},
 	"References": [
 		{

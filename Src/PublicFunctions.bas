@@ -39,8 +39,8 @@ End Function
 
 Sub test()
     Dim arr1, arr2  As Variant
-    arr1 = Array(1, 4, 5, 7, 8, 123, 9)
-    arr2 = Array(3, 5)
+    arr1 = array(1, 4, 5, 7, 8, 123, 9)
+    arr2 = array(3, 5)
     Dim S, E        As Double
     S = Timer
 

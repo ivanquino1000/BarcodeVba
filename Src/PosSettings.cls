@@ -1,51 +1,61 @@
-option explicit
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "PosSettings"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Option Explicit
 
-private Type TPosition
+Private Type TPosition
     x As Double
     y As Double
-    offset as Double
-    FallBack as String
+    offset As Double
+    FallBack As String
 End Type
 
-private this as TPosition
+Private this As TPosition
 
-private sub Class_Initialize()
+Private Sub class_initialize()
     this.x = 1
     this.y = 1
     this.offset = 0
     this.FallBack = "Default"
-end sub
+End Sub
 
-public property get X() as Double
-    X = this.x
-end property
+Public Property Get x() As Double
+    x = this.x
+End Property
 
-public property let X(byval value as Double)
+Public Property Let x(ByVal value As Double)
     this.x = value
-end property
+End Property
 
-public property get Y() as Double
-    Y = this.y
-end property
+Public Property Get y() As Double
+    y = this.y
+End Property
 
-public property let Y(byval value as Double)
+Public Property Let y(ByVal value As Double)
     this.y = value
-end property
+End Property
 
-public property get Offset() as Double
-    Offset = this.offset
-end property
+Public Property Get offset() As Double
+    offset = this.offset
+End Property
 
-public property let Offset(byval value as Double)
+Public Property Let offset(ByVal value As Double)
     this.offset = value
-end property
+End Property
 
-public property get FallBack() as String
+Public Property Get FallBack() As String
     FallBack = this.FallBack
-end property
+End Property
 
-public property let FallBack(byval value as String)
+Public Property Let FallBack(ByVal value As String)
     this.FallBack = value
-end property
+End Property
+
 
 

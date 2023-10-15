@@ -9,36 +9,29 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 
 
-Public Enum Theme
-    Black
-    White
-End Enum
-
-
-
 Private Type TCodebarLabel
     ItemObj         As Item
     CompanyObj      As Company
     PropConfig      As collection
-    PropFormat    As collection
+    PropFormat      As collection
     Theme           As Integer
-    ws as worksheet
-    PrintedDate as date
+    ws              As Worksheet
+    PrintedDate     As Date
 End Type
 
 Private this        As TCodebarLabel
 
-Private Sub Class_Initialize()
+Private Sub class_initialize()
     With this
         .ws = thiswowkbook.sheets("LabelSheet")
         .Theme = 0
         .PropConfig = New collection
         .PropFormat = New collection
-        ,PrintedDate = now
+        .PrintedDate = Now
 
-         'Item Pos Properties Configuration
-        AddPropConfig "Qty", 1,1,0,"Default"
-        AddPropConfig "Code", 
+        'Item Pos Properties Configuration
+        AddPropConfig "Qty", 1, 1, 0, "Default"
+        AddPropConfig "Code"
         AddPropConfig "Name", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
         AddPropConfig "Description", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
         AddPropConfig "Supplier", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
@@ -47,16 +40,16 @@ Private Sub Class_Initialize()
         AddPropConfig "SellingPrice", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlRight, False, xlCenter
         AddPropConfig "BoxQty", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial Narrow", 14, xlCenter, False, xlCenter
         AddPropConfig "BoxPrice", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlRight, False, xlCenter
-        AddPropConfig "IsNew", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter'Company Properties Configuration
+        AddPropConfig "IsNew", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter    'Company Properties Configuration
         'Company Pos Properties Configuration
-        
+
         AddPropConfig "Address", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
         AddPropConfig "Name", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
         AddPropConfig "Ruc", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
         AddPropConfig "Phone", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial Narrow", 14, xlCenter, False, xlCenter
         AddPropConfig "Email", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial Narrow", 14, xlCenter, False, xlCenter
         AddPropConfig "facebook", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Webdings", 14, xlCenter, False, xlCenter
-        
+
         AddPropConfig "Default", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Webdings", 14, xlCenter, False, xlCenter
 
         'Item Properties Configuration
@@ -70,55 +63,53 @@ Private Sub Class_Initialize()
         AddPropFormat "SellingPrice", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlRight, False, xlCenter
         AddPropFormat "BoxQty", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial Narrow", 14, xlCenter, False, xlCenter
         AddPropFormat "BoxPrice", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlRight, False, xlCenter
-        AddPropFormat "IsNew", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter'Company Properties Configuration
+        AddPropFormat "IsNew", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter    'Company Properties Configuration
         'Company Properties Configuration
-        
+
         AddPropFormat "Address", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
         AddPropFormat "Name", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
         AddPropFormat "Ruc", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
         AddPropFormat "Phone", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial Narrow", 14, xlCenter, False, xlCenter
         AddPropFormat "Email", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial Narrow", 14, xlCenter, False, xlCenter
         AddPropFormat "facebook", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Webdings", 14, xlCenter, False, xlCenter
-        
+
         AddPropFormat "Default", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Webdings", 14, xlCenter, False, xlCenter
 
 
     End With
 End Sub
 
-private sub AddPropConfig(
+Private Sub AddPropConfig( _
         ByVal PropName As String, _
-        byval x As Double,_
-    byval y As Double,_
-    byval offset as Double,_
-    byval FallBack as String)
+        ByVal x As Double, _
+        ByVal y As Double, _
+        ByVal offset As Double, _
+        ByVal FallBack As String)
 
-    dim Config as new posSettings
-    With Config 
+    Dim Config      As New PosSettings
+    With Config
         .x = x
         .y = y
         .offset = offset
         .FallBack = FallBack
     End With
-    this.PropConfig.Add PropName, Config
-End sub
+    this.PropConfig.add PropName, Config
+End Sub
 
-Private Sub AddPropFormat(
-    
-    ByVal PropName As String, _
+Private Sub AddPropFormat( _
+        ByVal PropName As String, _
+        ByVal BgColor As Long, _
+        ByVal Bold As Boolean, _
+        ByVal BorderStyle As XlLineStyle, _
+        ByVal BorderWeight As XlBorderWeight, _
+        ByVal FontColor As Long, _
+        ByVal FontName As String, _
+        ByVal FontSize As Long, _
+        ByVal HAlign As XlHAlign, _
+        ByVal Shirnk As Boolean, _
+        ByVal VAlign As XlVAlign)
 
-    ByVal BgColor As Long, _
-    ByVal Bold As Boolean, _
-    ByVal BorderStyle As XlLineStyle, _
-    ByVal BorderWeight As XlBorderWeight, _
-    ByVal FontColor As Long, _
-    ByVal FontName As String, _
-    ByVal FontSize As Long, _
-    ByVal HAlign As XlHAlign, _
-    ByVal Shirnk As Boolean, _
-    ByVal VAlign As XlVAlign)
-
-    dim Format as new FormatSettings
+    Dim Format      As New FormatSettings
     With Format
         .BgColor = BgColor
         .Bold = Bold
@@ -131,7 +122,7 @@ Private Sub AddPropFormat(
         .Shrink = Shirnk
         .VAlign = VAlign
     End With
-    this.PropSettings.Add PropName, Format
+    this.PropSettings.add PropName, Format
 End Sub
 
 Private Sub Build(ByVal CItem As Item, ByVal CTheme As Integer)
@@ -142,23 +133,26 @@ Private Sub Build(ByVal CItem As Item, ByVal CTheme As Integer)
 End Sub
 
 Public Function CreateRange() As range
-    Dim CbRange As range
+    Dim CbRange     As range
     With this
-    For Each prop In .ItemObj
-        dim key as string
-        key = prop.Name
-        If .PropConfig.Exists(prop) Then
-            If IsEmpty(CallByName(.ItemObj, prop, VbGet)) Then
-                key = .PropConfig.Item(prop).FallBack
+        For Each prop In .ItemObj
+            Dim key As String
+            key = prop.Name
+            If .PropConfig.Exists(prop) Then
+                If IsEmpty(CallByName(.ItemObj, prop, VbGet)) Then
+                    key = .PropConfig.Item(prop).FallBack
+                End If
+                CbRange(.PosSettings(key).x, .PosSettings(key).y).value = CallByName(.ItemObj, prop.Name, VbGet)
+                ApplyFormat CbRange(.PosSettings(key).x, .PosSettings(key).y), .PropSettings.Item(prop.Name)
             End If
-            CbRange(.posSettings(key).x, .posSettings(key).y).Value = CallByName(.ItemObj, prop.name, VbGet)
-            applyFormat CbRange(.posSettings(key).x, .posSettings(key).y), .PropSettings.Item(prop.name)
-        End If
-        
-    Next prop
+
+        Next prop
     End With
 End Function
 
+Private Sub ToUI()
+
+End Sub
 
 Public Property Get ItemObj() As Item
     Set ItemObj = this.ItemObj
