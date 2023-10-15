@@ -14,18 +14,18 @@ Public Event elementAdded(ByVal element_Id As String, ByVal element_Code As Stri
 
 
 Private Type TItem
-    Id As Integer
-    Qty As Integer
-    IsNew As Boolean
-    Code As String
-    Name As String
-    Description As String
-    Supplier As String
-    Cost As Double
-    WholeSalePrice As Double
-    SellingPrice As Double
-    BoxQty As Integer
     BoxPrice As Double
+    BoxQty As Integer
+    Code As String
+    Cost As Double
+    Description As String
+    Id As Integer
+    IsNew As Boolean
+    Name As String
+    Qty As Integer
+    SellingPrice As Double
+    Supplier As String
+    WholeSalePrice As Double
 End Type
 Private this As TItem
 

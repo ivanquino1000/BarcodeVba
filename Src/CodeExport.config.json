@@ -1,5 +1,8 @@
 {
 	"Module Paths": {
+		"ThisWorkbook": "ThisWorkbook.cls",
+		"TestModule1": "TestModule1.bas",
+		"CodebarLabel": "CodebarLabel.cls",
 		"DynamicTable": "DynamicTable.cls",
 		"Headers": "Headers.cls",
 		"Elements": "Elements.cls",
@@ -10,10 +13,7 @@
 		"StaticTable": "StaticTable.cls",
 		"Project": "Project.bas",
 		"Company": "Company.cls",
-		"PrintingForm": "PrintingForm.frm",
-		"ThisWorkbook": "ThisWorkbook.cls",
-		"TestModule1": "TestModule1.bas",
-		"CodebarLabel": "CodebarLabel.cls"
+		"PosSettings": "PosSettings.cls"
 	},
 	"References": [
 		{

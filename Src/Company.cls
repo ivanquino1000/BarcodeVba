@@ -13,8 +13,12 @@ Option Explicit
 
 Private Type TCompany
     Address As String
-    Ruc As String
     Name As String
+    Ruc As String
+    Email as string 
+    Phone as string
+    facebook as string
+
 End Type
 
 Private this As TCompany
@@ -22,17 +26,17 @@ Private this As TCompany
 
 Private Sub Class_Initialize()
     With this
-        .Address = "Octavio Muñoz Najar 202"
-        .Ruc = "20608875426"
+        .Address = "Octavio Muï¿½oz Najar 202"
         .Name = "SORAZA"
+        .Ruc = "20608875426"
     End With
 End Sub
 
 Public Sub init(ByVal IName As String, ByVal IAddress As String, ByVal IRuc As String)
     With this
         .Address = IAddress
-        .Ruc = IRuc
         .Name = IName
+        .Ruc = IRuc
     End With
 End Sub
 

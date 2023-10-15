@@ -14,76 +14,124 @@ Public Enum Theme
     White
 End Enum
 
-Public Enum PropSett
-    row
-    column
-    BgColor
-    FontSize
-    FontColor
-    FontName
-    Bold
-    Shrink
-    VAlign
-    HAlign
-    BorderStyle
-    BorderWeight
-    RightOffset
-End Enum
 
 
 Private Type TCodebarLabel
     ItemObj         As Item
+    CompanyObj      As Company
+    PropConfig      As collection
+    PropFormat    As collection
     Theme           As Integer
-    PropSettings    As Dictionary
-    RequiredProps   As Variant
+    ws as worksheet
+    PrintedDate as date
 End Type
 
 Private this        As TCodebarLabel
 
 Private Sub Class_Initialize()
     With this
-
+        .ws = thiswowkbook.sheets("LabelSheet")
         .Theme = 0
-        .PropSettings = New Dictionary
-        With .PropSettings
-            'r,c,Font,
+        .PropConfig = New collection
+        .PropFormat = New collection
+        ,PrintedDate = now
 
-            .Add "Cant", Array(1, 1, RGB(1, 1, 1), 14, RGB(1, 1, 1), _
-                    "Arial", False, False, x1center, x1center, _
-                    xlDashDot, xmedium, 0)
-            .Add "Codigo", Array(1, 1, RGB(1, 1, 1), 14, RGB(1, 1, 1), _
-                    "Arial", False, False, x1center, x1center, _
-                    xlDashDot, xmedium, 0)
-            .Add "Nombre", Array(1, 1, RGB(1, 1, 1), 14, RGB(1, 1, 1), _
-                    "Arial", False, False, x1center, x1center, _
-                    xlDashDot, xmedium, 0)
-            .Add "Adicional", Array(1, 1, RGB(1, 1, 1), 14, RGB(1, 1, 1), _
-                    "Arial", False, False, x1center, x1center, _
-                    xlDashDot, xmedium, 0)
-            .Add "Proveedor", Array(1, 1, RGB(1, 1, 1), 14, RGB(1, 1, 1), _
-                    "Arial", False, False, x1center, x1center, _
-                    xlDashDot, xmedium, 0)
-            .Add "Costo?", Array(1, 1, RGB(1, 1, 1), 14, RGB(1, 1, 1), _
-                    "Arial", False, False, x1center, x1center, _
-                    xlDashDot, xmedium, 0)
-            .Add "xMayor?", Array(1, 1, RGB(1, 1, 1), 14, RGB(1, 1, 1), _
-                    "Arial", False, False, x1center, x1center, _
-                    xlDashDot, xmedium, 0)
-            .Add "Precio", Array(1, 1, RGB(1, 1, 1), 14, RGB(1, 1, 1), _
-                    "Arial", False, False, x1center, x1center, _
-                    xlDashDot, xmedium, 0)
-            .Add "Cant*Caja", Array(1, 1, RGB(1, 1, 1), 14, RGB(1, 1, 1), _
-                    "Arial", False, False, x1center, x1center, _
-                    xlDashDot, xmedium, 0)
-            .Add "Precio*Caja", Array(1, 1, RGB(1, 1, 1), 14, RGB(1, 1, 1), _
-                    "Arial", False, False, x1center, x1center, _
-                    xlDashDot, xmedium, 0)
-        End With
+         'Item Pos Properties Configuration
+        AddPropConfig "Qty", 1,1,0,"Default"
+        AddPropConfig "Code", 
+        AddPropConfig "Name", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
+        AddPropConfig "Description", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
+        AddPropConfig "Supplier", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
+        AddPropConfig "Cost", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlRight, False, xlCenter
+        AddPropConfig "WholeSalePrice", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlRight, False, xlCenter
+        AddPropConfig "SellingPrice", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlRight, False, xlCenter
+        AddPropConfig "BoxQty", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial Narrow", 14, xlCenter, False, xlCenter
+        AddPropConfig "BoxPrice", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlRight, False, xlCenter
+        AddPropConfig "IsNew", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter'Company Properties Configuration
+        'Company Pos Properties Configuration
+        
+        AddPropConfig "Address", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
+        AddPropConfig "Name", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
+        AddPropConfig "Ruc", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
+        AddPropConfig "Phone", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial Narrow", 14, xlCenter, False, xlCenter
+        AddPropConfig "Email", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial Narrow", 14, xlCenter, False, xlCenter
+        AddPropConfig "facebook", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Webdings", 14, xlCenter, False, xlCenter
+        
+        AddPropConfig "Default", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Webdings", 14, xlCenter, False, xlCenter
 
+        'Item Properties Configuration
+        AddPropFormat "Qty", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
+        AddPropFormat "Code", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
+        AddPropFormat "Name", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
+        AddPropFormat "Description", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
+        AddPropFormat "Supplier", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
+        AddPropFormat "Cost", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlRight, False, xlCenter
+        AddPropFormat "WholeSalePrice", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlRight, False, xlCenter
+        AddPropFormat "SellingPrice", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlRight, False, xlCenter
+        AddPropFormat "BoxQty", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial Narrow", 14, xlCenter, False, xlCenter
+        AddPropFormat "BoxPrice", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlRight, False, xlCenter
+        AddPropFormat "IsNew", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter'Company Properties Configuration
+        'Company Properties Configuration
+        
+        AddPropFormat "Address", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
+        AddPropFormat "Name", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
+        AddPropFormat "Ruc", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial", 14, xlCenter, False, xlCenter
+        AddPropFormat "Phone", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial Narrow", 14, xlCenter, False, xlCenter
+        AddPropFormat "Email", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Arial Narrow", 14, xlCenter, False, xlCenter
+        AddPropFormat "facebook", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Webdings", 14, xlCenter, False, xlCenter
+        
+        AddPropFormat "Default", RGB(1, 1, 1), False, xlDashDot, xlMedium, RGB(1, 1, 1), "Webdings", 14, xlCenter, False, xlCenter
 
-        .DefaultProps = Array()
 
     End With
+End Sub
+
+private sub AddPropConfig(
+        ByVal PropName As String, _
+        byval x As Double,_
+    byval y As Double,_
+    byval offset as Double,_
+    byval FallBack as String)
+
+    dim Config as new posSettings
+    With Config 
+        .x = x
+        .y = y
+        .offset = offset
+        .FallBack = FallBack
+    End With
+    this.PropConfig.Add PropName, Config
+End sub
+
+Private Sub AddPropFormat(
+    
+    ByVal PropName As String, _
+
+    ByVal BgColor As Long, _
+    ByVal Bold As Boolean, _
+    ByVal BorderStyle As XlLineStyle, _
+    ByVal BorderWeight As XlBorderWeight, _
+    ByVal FontColor As Long, _
+    ByVal FontName As String, _
+    ByVal FontSize As Long, _
+    ByVal HAlign As XlHAlign, _
+    ByVal Shirnk As Boolean, _
+    ByVal VAlign As XlVAlign)
+
+    dim Format as new FormatSettings
+    With Format
+        .BgColor = BgColor
+        .Bold = Bold
+        .BorderStyle = BorderStyle
+        .BorderWeight = BorderWeight
+        .FontColor = FontColor
+        .FontName = FontName
+        .FontSize = FontSize
+        .HAlign = HAlign
+        .Shrink = Shirnk
+        .VAlign = VAlign
+    End With
+    this.PropSettings.Add PropName, Format
 End Sub
 
 Private Sub Build(ByVal CItem As Item, ByVal CTheme As Integer)
@@ -94,13 +142,17 @@ Private Sub Build(ByVal CItem As Item, ByVal CTheme As Integer)
 End Sub
 
 Public Function CreateRange() As range
-    Dim cbRange As range
+    Dim CbRange As range
     With this
     For Each prop In .ItemObj
-        If .PropSettings.Exists(prop) Then
+        dim key as string
+        key = prop.Name
+        If .PropConfig.Exists(prop) Then
             If IsEmpty(CallByName(.ItemObj, prop, VbGet)) Then
-            
+                key = .PropConfig.Item(prop).FallBack
             End If
+            CbRange(.posSettings(key).x, .posSettings(key).y).Value = CallByName(.ItemObj, prop.name, VbGet)
+            applyFormat CbRange(.posSettings(key).x, .posSettings(key).y), .PropSettings.Item(prop.name)
         End If
         
     Next prop
