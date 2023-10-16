@@ -1,11 +1,11 @@
 Attribute VB_Name = "PublicFunctions"
-Public Sub ApplyFormat(ByVal rng As range, ByVal Format As FormatSettings)
+Public Sub ApplyFormat(ByVal rng As range, ByVal format As FormatSettings)
 
     With rng
-        .Interior.Color = Format.BgColor
-        .font.Name = Format.FontName
-        .font.Size = Format.FontSize
-        .font.Color = Format.FontColor
+        .Interior.Color = format.BgColor
+        .font.Name = format.FontName
+        .font.Size = format.FontSize
+        .font.Color = format.FontColor
         .HorizontalAlignment = xlCenter
         .VerticalAlignment = xlCenter
         .Borders.Weight = xlMedium
@@ -13,7 +13,39 @@ Public Sub ApplyFormat(ByVal rng As range, ByVal Format As FormatSettings)
     End With
 
 End Sub
+Sub LabelTest()
+    Dim Product As New Item
+    Dim Company As New Company
+    Dim Lab As New Label
+     
+    Lab.ToRange
+    
+    
+End Sub
+Sub MergeRange()
+    Dim cell As range: Set cell = ThisWorkbook.Sheets("LabelSheet").Cells(5, 5)
+    Dim Direction As String
+    Dim places As Integer
 
+    Direction = "L"
+    places = 3
+
+    Select Case Direction 'R, L, U, D
+        Case "R"
+            Set cell = cell.Resize(1, 1 + places)
+        Case "L"
+            Set cell = cell.offset(0, -places).Resize(1, places + 1)
+        Case "U"
+            Set cell = cell.offset(-places, 0).Resize
+        Case "D"
+            Set cell = cell.Resize(1 + places, 1)
+    End Select
+
+    ' Merge the resulting range
+    cell.Merge
+    'Debug.Assert cell.Address
+    Debug.Print cell.Address
+End Sub
 
 Function BubbleSort(arr As Variant) As Variant
     Dim i As Long, j As Long
@@ -39,8 +71,8 @@ End Function
 
 Sub test()
     Dim arr1, arr2  As Variant
-    arr1 = array(1, 4, 5, 7, 8, 123, 9)
-    arr2 = array(3, 5)
+    arr1 = Array(1, 4, 5, 7, 8, 123, 9)
+    arr2 = Array(3, 5)
     Dim S, E        As Double
     S = Timer
 

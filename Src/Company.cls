@@ -29,6 +29,9 @@ Private Sub class_initialize()
         .Address = "Octavio Mu�oz Najar 202"
         .Name = "SORAZA"
         .Ruc = "20608875426"
+        .Email = "sorazaimport@gmail.com"
+        .Phone = "958190331"
+        .facebook = "tinyurl.com/soraza"
     End With
 End Sub
 

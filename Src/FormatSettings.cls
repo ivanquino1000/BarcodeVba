@@ -44,6 +44,24 @@ Private Sub class_initialize()
 End Sub
 
 
+'Private Sub Build(ByVal BgColor As Long, ByVal FontSize As Long, ByVal FontColor As Long, _
+'                ByVal FontName As String, ByVal Bold As Boolean, ByVal Shirnk As Boolean, _
+'                ByVal VAlign As XlVAlign, ByVal HAlign As XlHAlign, ByVal BorderStyle As XlLineStyle, _
+'                ByVal BorderWeight As XlBorderWeight)
+'    With this
+'        .BgColor = BgColor
+'        .Bold = Bold
+'        .BorderStyle = BorderStyle
+'        .BorderWeight = BorderWeight
+'        .FontColor = FontColor
+'        .FontName = FontName
+'        .FontSize = FontSize
+'        .HAlign = HAlign
+'        .Shirnk = Shirnk
+'        .VAlign = VAlign
+'    End With
+'End Sub
+
 
 
 Public Property Get BgColor() As Long
@@ -125,21 +143,3 @@ End Property
 Public Property Let VAlign(ByVal value As XlVAlign)
     this.VAlign = value
 End Property
-
-Private Sub Build(ByVal BgColor As Long, ByVal FontSize As Long, ByVal FontColor As Long, _
-                ByVal FontName As String, ByVal Bold As Boolean, ByVal Shirnk As Boolean, _
-                ByVal VAlign As XlVAlign, ByVal HAlign As XlHAlign, ByVal BorderStyle As XlLineStyle, _
-                ByVal BorderWeight As XlBorderWeight)
-    With this
-        .BgColor = BgColor
-        .Bold = Bold
-        .BorderStyle = BorderStyle
-        .BorderWeight = BorderWeight
-        .FontColor = FontColor
-        .FontName = FontName
-        .FontSize = FontSize
-        .HAlign = HAlign
-        .Shirnk = Shirnk
-        .VAlign = VAlign
-    End With
-End Sub

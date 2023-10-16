@@ -27,6 +27,7 @@ Private Type TItem
     Supplier As String
     WholeSalePrice As Double
 End Type
+
 Private this As TItem
 
 Private Sub class_initialize()

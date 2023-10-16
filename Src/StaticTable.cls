@@ -28,7 +28,7 @@ Private Type TStaticTable
     Row             As Integer
     Column          As Integer
     range           As range
-    ws              As Worksheet
+    Ws              As Worksheet
     Headers         As Headers
     ElementsRange   As range
     PreviousElemRange As range
@@ -43,7 +43,7 @@ Private Sub class_initialize()
         .Row = 1
         .Column = 1
 
-        Set .ws = ThisWorkbook.ActiveSheet
+        Set .Ws = ThisWorkbook.ActiveSheet
         Set .ElementsFormat = New FormatSettings
         With .ElementsFormat
             .BgColor = RGB(249, 244, 245)
@@ -58,13 +58,13 @@ End Sub
 
 Public Sub init(ByVal Row As Integer, _
         ByVal Column As Integer, _
-        ByVal ws As Worksheet, _
+        ByVal Ws As Worksheet, _
         ByVal Headers As Variant _
         )
     With this
         .Row = Row
         .Column = Column
-        Set .ws = ws
+        Set .Ws = Ws
         With HeadersComp
             .values = Headers
         End With
@@ -78,10 +78,10 @@ End Sub
 Public Sub Update()
     UpdateRanges
     With this
-        .ws.Select
-        HeadersComp.Update .ws
+        .Ws.Select
+        HeadersComp.Update .Ws
         ElementsUpdate
-        .ws.Columns.AutoFit
+        .Ws.Columns.AutoFit
     End With
     
 End Sub
@@ -117,9 +117,9 @@ End Sub
 
 Private Sub UpdateRanges()
     With HeadersComp
-        Set .range = this.ws.range( _
-                this.ws.Cells(this.Row, this.Column), _
-                this.ws.Cells(this.Row, this.Column + UBound(.values)) _
+        Set .range = this.Ws.range( _
+                this.Ws.Cells(this.Row, this.Column), _
+                this.Ws.Cells(this.Row, this.Column + UBound(.values)) _
                 )
     End With
 
@@ -128,9 +128,9 @@ Private Sub UpdateRanges()
         If .ElementsCounter = 0 Then
             EmptyElements = 1
         End If
-        Set .ElementsRange = this.ws.range( _
-                this.ws.Cells(this.Row + 1, this.Column), _
-                this.ws.Cells(this.Row + EmptyElements + .ElementsCounter, this.Column + UBound(HeadersComp.values)) _
+        Set .ElementsRange = this.Ws.range( _
+                this.Ws.Cells(this.Row + 1, this.Column), _
+                this.Ws.Cells(this.Row + EmptyElements + .ElementsCounter, this.Column + UBound(HeadersComp.values)) _
                 )
         Set .range = Union( _
                 HeadersComp.range, _
@@ -205,12 +205,12 @@ End Property
 
 
 
-Public Property Get ws() As Worksheet
-    Set ws = this.ws
+Public Property Get Ws() As Worksheet
+    Set Ws = this.Ws
 End Property
 
-Public Property Set ws(ByVal value As Worksheet)
-    Set this.ws = value
+Public Property Set Ws(ByVal value As Worksheet)
+    Set this.Ws = value
 End Property
 
 Public Property Get Column() As Integer

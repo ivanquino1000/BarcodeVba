@@ -40,7 +40,7 @@ Private Type TDynamicTable
     SrcBookPath     As String
     NewItemsBookPath As String
     TestBookPath    As String
-    ws              As Worksheet
+    Ws              As Worksheet
     TempBookPath    As String
 
 End Type
@@ -53,7 +53,7 @@ Private Sub class_initialize()
         .Row = 1
         .Column = 1
 
-        Set .ws = ThisWorkbook.ActiveSheet
+        Set .Ws = ThisWorkbook.ActiveSheet
     End With
     Set HeadersComp = New Headers
     Set ElementsComp = New Elements
@@ -66,14 +66,14 @@ Private Sub class_initialize()
 End Sub
 
 Public Sub init(ByVal Row As Integer, _
-        ByVal Column As Integer, _
-        ByVal ws As Worksheet, _
-        ByVal Headers As Variant _
-        )
+            ByVal Column As Integer, _
+            ByVal Ws As Worksheet, _
+            ByVal Headers As Variant _
+            )
     With this
         .Row = Row
         .Column = Column
-        Set .ws = ws
+        Set .Ws = Ws
         .SrcBookPath = FindLatestXLSXFile(Environ("USERPROFILE") & "\Downloads\")
         .NewItemsBookPath = Environ("USERPROFILE") & "\Documents\IMPORT" & "Items.xlsx"
         .TempBookPath = ThisWorkbook.Path & "\Config" & "\TempData.xmls\"
@@ -91,10 +91,10 @@ End Sub
 Public Sub GetData()
 
     On Error GoTo getDataError
-    
+
     Dim InitTime, EndTime As Double
     InitTime = Timer
-    
+
     Dim SourceBook  As Workbook: Set SourceBook = Workbooks.Open(this.SrcBookPath)
     Dim SourceSheet As Worksheet: Set SourceSheet = SourceBook.Worksheets(1)
 
@@ -111,15 +111,15 @@ Public Sub GetData()
 
     With SourceTableRef
         SrcElemntsCounter = SourceSheet.Cells(SourceSheet.Rows.Count, .CodeCol).End(xlUp).Row
-        
+
         Dim CodesRng, SrcTabRng, cell As range
-        
+
         Set CodesRng = SourceSheet.range( _
-                .CodeCol & .FirstRow & ":" & _
-                .CodeCol & SrcElemntsCounter)
+                    .CodeCol & .FirstRow & ":" & _
+                    .CodeCol & SrcElemntsCounter)
         Set SrcTabRng = SourceSheet.range( _
-                .CodeCol & .FirstRow & ":" & _
-                .PriceCol & SrcElemntsCounter)
+                    .CodeCol & .FirstRow & ":" & _
+                    .PriceCol & SrcElemntsCounter)
         For Each cell In CodesRng
             If Not IsEmpty(cell.value) Then
                 If Not regex.test(cell.value) Then
@@ -133,16 +133,16 @@ Public Sub GetData()
         SrcElemntsCounter = SourceSheet.Cells(SourceSheet.Rows.Count, .CodeCol).End(xlUp).Row
 
         'Save SourceBook Elements to ElementsComp Collection - Dictionary
-        Dim items   As New collection
+        Dim items   As New Collection
         Dim IdValuesMap As New Dictionary
         Dim i       As Long
         Dim ItemObj As Item
         Dim Code, Name, Price As String
-        Dim IdValues As Variant: IdValues = array("-1")
+        Dim IdValues As Variant: IdValues = Array("-1")
         Dim CurrentKey, PrevKey As String
         Dim CodeId, TempIdValCount As Long
         PrevKey = ExtractLetter(SourceSheet.range(.CodeCol & .FirstRow & ":" & .CodeCol & .FirstRow).value)
-            
+
         For i = .FirstRow To SrcElemntsCounter
 
             Code = SourceSheet.Cells(i, .CodeCol).value
@@ -166,14 +166,14 @@ Public Sub GetData()
                 PrevKey = CurrentKey
             Else 'Unmatching CodeKeys - Store PrevKey,IdValues[] - Reset IdValues - Init CodeId
                 'ElementsComp.CodeIds.Add PrevKey, IdValues
-                IdValuesMap.add PrevKey, IdValues
+                IdValuesMap.Add PrevKey, IdValues
                 ReDim IdValues(0 To 0) 'Erase IdValues
                 IdValues(0) = CodeId
                 PrevKey = CurrentKey
                 TempIdValCount = 0
             End If
 
-            items.add ItemObj
+            items.Add ItemObj
 
         Next i
         Set ElementsComp.values = items
@@ -190,16 +190,16 @@ getDataError:
     If Not SourceBook Is Nothing And SourceSheet.Visible Then
         SourceBook.Close False
     End If
-    
+
 End Sub
 
 Public Sub Update()
     UpdateRanges
     With this
-        .ws.Select
-        HeadersComp.Update .ws
-        ElementsComp.Update .ws, HeadersComp.values
-        .ws.Columns.AutoFit
+        .Ws.Select
+        HeadersComp.Update .Ws
+        ElementsComp.Update .Ws, HeadersComp.values
+        .Ws.Columns.AutoFit
     End With
 End Sub
 
@@ -209,10 +209,10 @@ End Sub
 Private Sub UpdateRanges()
 
     With HeadersComp
-        Set .range = this.ws.range( _
-                this.ws.Cells(this.Row, this.Column), _
-                this.ws.Cells(this.Row, this.Column + UBound(.values)) _
-                )
+        Set .range = this.Ws.range( _
+                    this.Ws.Cells(this.Row, this.Column), _
+                    this.Ws.Cells(this.Row, this.Column + UBound(.values)) _
+                    )
     End With
 
     With ElementsComp
@@ -220,16 +220,16 @@ Private Sub UpdateRanges()
         If .values.Count = 0 Then
             EmptyElements = 1
         End If
-        Set .range = this.ws.range( _
-                this.ws.Cells(this.Row + 1, this.Column), _
-                this.ws.Cells(this.Row + EmptyElements + .values.Count, this.Column + UBound(HeadersComp.values)) _
-                )
+        Set .range = this.Ws.range( _
+                    this.Ws.Cells(this.Row + 1, this.Column), _
+                    this.Ws.Cells(this.Row + EmptyElements + .values.Count, this.Column + UBound(HeadersComp.values)) _
+                    )
     End With
     With this
         Set .range = Union( _
-                HeadersComp.range, _
-                ElementsComp.range _
-                )
+                    HeadersComp.range, _
+                    ElementsComp.range _
+                    )
     End With
 End Sub
 
@@ -240,14 +240,14 @@ Private Sub PrintTest()
     'Dim LabelRange As Range
     Label.Build()
     Set printingRange = Label.range
-    
-    
-    
-    
+
+
+
+
     printingRange.PrintOut Copies:=1, Preview:=True, ActivePrinter:=PrinterName
 End Sub
 Private Sub PrintList()
-    
+
 End Sub
 
 
@@ -309,12 +309,12 @@ Public Property Let TestBookPath(ByVal value As String)
     this.TestBookPath = value
 End Property
 
-Public Property Get ws() As Worksheet
-    Set ws = this.ws
+Public Property Get Ws() As Worksheet
+    Set Ws = this.Ws
 End Property
 
-Public Property Set ws(ByVal value As Worksheet)
-    Set this.ws = value
+Public Property Set Ws(ByVal value As Worksheet)
+    Set this.Ws = value
 End Property
 
 Public Property Get TempBookPath() As String

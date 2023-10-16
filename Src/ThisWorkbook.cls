@@ -20,7 +20,7 @@ Const IntroductoryMessage As String = "Welcome to Codebar Printer You will first
 Dim InitTime, EndTime As Double
 
 Public PrinterName As String
- 
+Attribute PrinterName.VB_VarHelpID = -1
 
 
 Private WithEvents listTable As DynamicTable
@@ -38,7 +38,7 @@ Private Sub Workbook_Open()
     Application.EnableEvents = False
     
     Dim sheet       As Worksheet
-    For Each sheet In Me.sheets
+    For Each sheet In Me.Sheets
         With sheet.Cells
             .ClearContents
             .ClearFormats
@@ -53,21 +53,21 @@ Private Sub Workbook_Open()
     Set searchTable = New StaticTable
     Set resultsTable = New StaticTable
 
-    listTable.init 5, 2, ThisWorkbook.sheets("MainSheet"), _
-            array( _
+    listTable.init 5, 2, ThisWorkbook.Sheets("MainSheet"), _
+            Array( _
             "Cant", "Codigo", "Nombre", _
             "Adicional", "Proveedor", "Cant*Caja", "Precio*Caja", _
             "Costo?", "xMayor?", "Precio")
-    databaseTable.init 1, 1, ThisWorkbook.sheets("DataSheet"), _
-            array( _
+    databaseTable.init 1, 1, ThisWorkbook.Sheets("DataSheet"), _
+            Array( _
             "Codigo", "Nombre", "Precio" _
             )
-    searchTable.init 2, 15, ThisWorkbook.sheets("MainSheet"), _
-            array( _
+    searchTable.init 2, 15, ThisWorkbook.Sheets("MainSheet"), _
+            Array( _
             "Codigo", "Nombre", "Precio" _
             )
-    resultsTable.init 5, 15, ThisWorkbook.sheets("MainSheet"), _
-            array( _
+    resultsTable.init 5, 15, ThisWorkbook.Sheets("MainSheet"), _
+            Array( _
             "Codigo", "Nombre", "Precio" _
             )
     EndTime = Timer
@@ -75,7 +75,7 @@ Private Sub Workbook_Open()
 
     databaseTable.GetData
 
-    ThisWorkbook.sheets("MainSheet").Select
+    ThisWorkbook.Sheets("MainSheet").Select
     Application.ScreenUpdating = True
     Application.EnableEvents = True
 End Sub
@@ -148,54 +148,54 @@ Private Sub Workbook_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As 
 End Sub
 
 Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As range)
-
-    ' SearchField-Change
-    If Not Intersect(Target, searchTable.ElementsRange) Is Nothing Then
-
-        Dim Header, UserInput As String
-        Dim HeaderIndex As Integer
-        With searchTable
-            HeaderIndex = Target.Column - .Column
-            Header = listTable.ElementsComp.HeaderMap( _
-                    .HeadersComp.values(HeaderIndex) _
-                    )
-            UserInput = Target.value
-        End With
-
-        
-        If UserInput = "" Then
-        GoTo FillResults
-        End If
-        Application.EnableEvents = False
-        Select Case Header
-            Case "Code":
-                Target.value = UserInput
-            Case "Name":
-                Target.value = "*" & UserInput
-            Case "SellingPrice":
-                                If IsNumeric(UserInput) & UserInput > 30 Then
-                                    Target.value = "<=" & UserInput
-                                Else
-                                    Target.value = ">=" & UserInput
-                                    End If
-            Case Else
-                Debug.Print "User Input: Header Out of Index"
-        End Select
-        Application.EnableEvents = True
-
-        'Fill & Format Results Table
-FillResults:
-        resultsTable.ClearPrevRange
-        Dim Elements As Integer
-        databaseTable.range.AdvancedFilter Action:=xlFilterCopy, _
-                criteriarange:=searchTable.range, CopyToRange:=resultsTable.HeadersComp.range, _
-                Unique:=False
-        With resultsTable
-            Elements = .ws.Cells(.ws.Rows.Count, .Column).End(xlUp).Row - .Row
-        End With
-        resultsTable.ElementsCounter = Elements
-
-    End If
+'
+'    ' SearchField-Change
+'    If Not Intersect(Target, searchTable.ElementsRange) Is Nothing Then
+'
+'        Dim Header, UserInput As String
+'        Dim HeaderIndex As Integer
+'        With searchTable
+'            HeaderIndex = Target.Column - .Column
+'            Header = listTable.ElementsComp.HeaderMap( _
+'                    .HeadersComp.values(HeaderIndex) _
+'                    )
+'            UserInput = Target.value
+'        End With
+'
+'
+'        If UserInput = "" Then
+'        GoTo FillResults
+'        End If
+'        Application.EnableEvents = False
+'        Select Case Header
+'            Case "Code":
+'                Target.value = UserInput
+'            Case "Name":
+'                Target.value = "*" & UserInput
+'            Case "SellingPrice":
+'                                If IsNumeric(UserInput) & UserInput > 30 Then
+'                                    Target.value = "<=" & UserInput
+'                                Else
+'                                    Target.value = ">=" & UserInput
+'                                    End If
+'            Case Else
+'                Debug.Print "User Input: Header Out of Index"
+'        End Select
+'        Application.EnableEvents = True
+'
+'        'Fill & Format Results Table
+'FillResults:
+'        resultsTable.ClearPrevRange
+'        Dim Elements As Integer
+'        databaseTable.range.AdvancedFilter Action:=xlFilterCopy, _
+'                criteriarange:=searchTable.range, CopyToRange:=resultsTable.HeadersComp.range, _
+'                Unique:=False
+'        With resultsTable
+'            Elements = .Ws.Cells(.Ws.Rows.Count, .Column).End(xlUp).Row - .Row
+'        End With
+'        resultsTable.ElementsCounter = Elements
+'
+'    End If
 End Sub
 
 

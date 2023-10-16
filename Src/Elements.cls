@@ -9,15 +9,15 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Public Event ValuesUpdated(ByVal values As collection)
+Public Event ValuesUpdated(ByVal values As Collection)
 
 Private PreviousRange As range
 
 Private Type TElements
-    values As collection
+    values As Collection
     Counter As Integer
     range As range
-    Format As FormatSettings
+    format As FormatSettings
     NewFormat As FormatSettings
     HeaderMap As Dictionary
     CodeIds As Dictionary
@@ -45,12 +45,12 @@ End Property
 
 Private Sub class_initialize()
     With this
-        Set .values = New collection
-        Set .Format = New FormatSettings
+        Set .values = New Collection
+        Set .format = New FormatSettings
         Set .NewFormat = New FormatSettings
         .Counter = .values.Count
         
-        With .Format
+        With .format
             .BgColor = RGB(249, 244, 245)
             .FontColor = vbBlack
             .FontName = "Tw Cen MT"
@@ -67,21 +67,21 @@ Private Sub class_initialize()
         Set .NewCodeIds = New Dictionary
         
         With .HeaderMap
-            .add "Cant", "Qty"
-            .add "Codigo", "Code"
-            .add "Nombre", "Name"
-            .add "Adicional", "Description"
-            .add "Proveedor", "Supplier"
-            .add "Costo?", "Cost"
-            .add "xMayor?", "WholeSalePrice"
-            .add "Precio", "SellingPrice"
-            .add "Cant*Caja", "BoxQty"
-            .add "Precio*Caja", "BoxPrice"
+            .Add "Cant", "Qty"
+            .Add "Codigo", "Code"
+            .Add "Nombre", "Name"
+            .Add "Adicional", "Description"
+            .Add "Proveedor", "Supplier"
+            .Add "Costo?", "Cost"
+            .Add "xMayor?", "WholeSalePrice"
+            .Add "Precio", "SellingPrice"
+            .Add "Cant*Caja", "BoxQty"
+            .Add "Precio*Caja", "BoxPrice"
         End With
     End With
 End Sub
 
-Public Sub Update(ByVal ws As Worksheet, ByVal Headers As Variant)
+Public Sub Update(ByVal Ws As Worksheet, ByVal Headers As Variant)
 
 ' ClearContents and Format in previous Range
     If Not PreviousRange Is Nothing Then
@@ -94,7 +94,7 @@ Public Sub Update(ByVal ws As Worksheet, ByVal Headers As Variant)
     
         
 'Show Elemts.values and Special Formating
-    Call ApplyFormat(this.range, this.Format)
+    Call ApplyFormat(this.range, this.format)
     
     With this
         If .values.Count = 0 Or UBound(Headers) = 0 Then
@@ -114,7 +114,7 @@ Public Sub Update(ByVal ws As Worksheet, ByVal Headers As Variant)
             Row = Row + 1
             
             Dim ElemRange As range
-            Set ElemRange = ws.range(Cells(range.Row, range.Column), _
+            Set ElemRange = Ws.range(Cells(range.Row, range.Column), _
                                      Cells(range.Row, range.Columns.Count))
             If elem.IsNew Then
                 Call ApplyFormat(ElemRange, .NewFormat)
@@ -140,11 +140,11 @@ Public Property Set HeaderMap(ByVal RHS As Object)
     Set this.HeaderMap = RHS
 End Property
 
-Public Property Get values() As collection
+Public Property Get values() As Collection
     Set values = this.values
 End Property
 
-Public Property Set values(ByVal RHS As collection)
+Public Property Set values(ByVal RHS As Collection)
     Set this.values = RHS
     RaiseEvent ValuesUpdated(this.values)
 End Property
@@ -165,12 +165,12 @@ Public Property Set range(ByVal RHS As range)
     Set this.range = RHS
 End Property
 
-Public Property Get Format() As FormatSettings
-    Set Format = this.Format
+Public Property Get format() As FormatSettings
+    Set format = this.format
 End Property
 
-Public Property Set Format(ByVal RHS As FormatSettings)
-    Set this.Format = RHS
+Public Property Set format(ByVal RHS As FormatSettings)
+    Set this.format = RHS
 End Property
 
 Public Property Get NewFormat() As FormatSettings

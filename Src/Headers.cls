@@ -15,17 +15,17 @@ Private Type THeaders
     values As Variant
     Counter As Integer
     range As range
-    Format As FormatSettings
+    format As FormatSettings
 End Type
 
 Private this As THeaders
 
 Private Sub class_initialize()
     With this
-        .values = array("Head 1", "Head 2", "Head 3")
-        Set .Format = New FormatSettings
+        .values = Array("Head 1", "Head 2", "Head 3")
+        Set .format = New FormatSettings
         .Counter = 1
-        With .Format
+        With .format
             .BgColor = RGB(214, 104, 83)
             .FontSize = 16
             .FontColor = vbWhite
@@ -34,19 +34,19 @@ Private Sub class_initialize()
     End With
 End Sub
 
-Public Sub Update(ByVal ws As Worksheet)
+Public Sub Update(ByVal Ws As Worksheet)
     On Error GoTo err
     Dim Header As Variant
     Dim i As Long
     For Each Header In this.values
     
-        ws.Cells( _
+        Ws.Cells( _
         this.range.Row, this.range.Column + i _
                        ).value = Header
 
         i = i + 1
     Next Header
-    Call ApplyFormat(this.range, this.Format)
+    Call ApplyFormat(this.range, this.format)
     
     Exit Sub
     
@@ -88,12 +88,12 @@ Public Property Set range(ByVal RHS As range)
     Set this.range = RHS
 End Property
 
-Public Property Get Format() As FormatSettings
-    Set Format = this.Format
+Public Property Get format() As FormatSettings
+    Set format = this.format
 End Property
 
-Public Property Set Format(ByVal RHS As FormatSettings)
-    Set this.Format = RHS
+Public Property Set format(ByVal RHS As FormatSettings)
+    Set this.format = RHS
 End Property
 
 
