@@ -22,8 +22,8 @@ Private Type TFormatSettings
     HAlign As XlHAlign
     Shirnk As Boolean
     VAlign As XlVAlign
+    NumberFormat As String
 End Type
-
 Private this As TFormatSettings
 
 Public Event DataInitialized(ByVal BgColor As Long, ByVal FontColor As Long, ByVal FontSize As Long, ByVal FontName As String)
@@ -32,7 +32,7 @@ Private Sub class_initialize()
     With this
         .BgColor = RGB(112, 88, 124)
         .Bold = False
-        .BorderStyle = xlDashDot
+        .BorderStyle = xlContinuous
         .BorderWeight = xlMedium
         .FontColor = vbWhite
         .FontName = "Courier New"
@@ -40,6 +40,7 @@ Private Sub class_initialize()
         .HAlign = xlCenter
         .Shirnk = False
         .VAlign = xlCenter
+        .NumberFormat = "General"
     End With
 End Sub
 
@@ -143,3 +144,13 @@ End Property
 Public Property Let VAlign(ByVal value As XlVAlign)
     this.VAlign = value
 End Property
+
+
+Public Property Get NumberFormat() As String
+    NumberFormat = this.NumberFormat
+End Property
+
+Public Property Let NumberFormat(ByVal RHS As String)
+    this.NumberFormat = RHS
+End Property
+

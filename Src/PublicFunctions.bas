@@ -3,21 +3,36 @@ Public Sub ApplyFormat(ByVal rng As range, ByVal format As FormatSettings)
 
     With rng
         .Interior.Color = format.BgColor
-        .font.Name = format.FontName
-        .font.Size = format.FontSize
-        .font.Color = format.FontColor
-        .HorizontalAlignment = xlCenter
-        .VerticalAlignment = xlCenter
-        .Borders.Weight = xlMedium
-        .Borders.LineStyle = xlDashDot
+        .Font.Name = format.FontName
+        .Font.Size = format.FontSize
+        .Font.Color = format.FontColor
+        .HorizontalAlignment = format.HAlign
+        .VerticalAlignment = format.VAlign
+        .Borders.Weight = format.BorderWeight
+        .Borders.LineStyle = format.BorderStyle
+        .NumberFormat = format.NumberFormat
     End With
-
 End Sub
 Sub LabelTest()
-    Dim Product As New Item
+    'TODO LIST
+    'Label Header Custom Format Static
+    'Implement Lables in Model Obj
+    'AutoCalculate Label on Item
+    'DATATABLE
+    'Implement New ItemCode
+    'List Table -Change Update Elements Collection
+    'List Table - DeleteDoubleClick + Confirmation Msg
+    '-- Search in a Collection On Id
+    '-- headers Mapper
+    
+    
+    Dim Product As New item
     Dim Company As New Company
     Dim Lab As New Label
-     
+    With ThisWorkbook.Sheets("LabelSheet")
+        .Cells.ClearContents
+        .Cells.ClearFormats
+    End With
     Lab.ToRange
     
     
@@ -25,20 +40,20 @@ End Sub
 Sub MergeRange()
     Dim cell As range: Set cell = ThisWorkbook.Sheets("LabelSheet").Cells(5, 5)
     Dim Direction As String
-    Dim places As Integer
+    Dim Places As Integer
 
     Direction = "L"
-    places = 3
+    Places = 3
 
     Select Case Direction 'R, L, U, D
         Case "R"
-            Set cell = cell.Resize(1, 1 + places)
+            Set cell = cell.Resize(1, 1 + Places)
         Case "L"
-            Set cell = cell.offset(0, -places).Resize(1, places + 1)
+            Set cell = cell.offset(0, -Places).Resize(1, Places + 1)
         Case "U"
-            Set cell = cell.offset(-places, 0).Resize
+            Set cell = cell.offset(-Places, 0).Resize
         Case "D"
-            Set cell = cell.Resize(1 + places, 1)
+            Set cell = cell.Resize(1 + Places, 1)
     End Select
 
     ' Merge the resulting range

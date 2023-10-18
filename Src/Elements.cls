@@ -53,13 +53,13 @@ Private Sub class_initialize()
         With .format
             .BgColor = RGB(249, 244, 245)
             .FontColor = vbBlack
-            .FontName = "Tw Cen MT"
+            .FontName = "Bahnschrift SemiLight"
             .FontSize = 14
         End With
         With .NewFormat
             .BgColor = RGB(249, 244, 245)
             .FontColor = RGB(255, 87, 20)
-            .FontName = "Tw Cen MT"
+            .FontName = "Bahnschrift SemiLight"
             .FontSize = 14
         End With
         Set .HeaderMap = New Dictionary

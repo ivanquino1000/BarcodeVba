@@ -29,7 +29,7 @@ Private Sub class_initialize()
             .BgColor = RGB(214, 104, 83)
             .FontSize = 16
             .FontColor = vbWhite
-            .FontName = "Courier New"
+            .FontName = "Bahnschrift SemiLight"
         End With
     End With
 End Sub

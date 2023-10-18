@@ -16,9 +16,9 @@ Implements IDataTable
  * Set UpdateLogic - ws.Select - HeadersUpdate - Clear prev elem range + format elem range
 
 Public Event HeadersPlaced(ByVal Headers As Variant)
-Public Event elementAdded(ByVal element As Item)
+Public Event elementAdded(ByVal element As item)
 Public Event TableUpdated()
-Public Event ElementDeleted(ByVal element As Item)
+Public Event ElementDeleted(ByVal element As item)
 Public Event DataGotten(ByVal elem_num As Long)
 
 Public WithEvents HeadersComp As Headers

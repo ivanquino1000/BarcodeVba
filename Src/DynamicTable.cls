@@ -13,9 +13,9 @@ Option Explicit
 Implements IDataTable
 
 Public Event HeadersPlaced(ByVal Headers As Variant)
-Public Event elementAdded(ByVal element As Item)
+Public Event elementAdded(ByVal element As item)
 Public Event TableUpdated()
-Public Event ElementDeleted(ByVal element As Item)
+Public Event ElementDeleted(ByVal element As item)
 Public Event DataGotten(ByVal elem_num As Long)
 
 Public WithEvents HeadersComp As Headers
@@ -136,7 +136,7 @@ Public Sub GetData()
         Dim items   As New Collection
         Dim IdValuesMap As New Dictionary
         Dim i       As Long
-        Dim ItemObj As Item
+        Dim ItemObj As item
         Dim Code, Name, Price As String
         Dim IdValues As Variant: IdValues = Array("-1")
         Dim CurrentKey, PrevKey As String
@@ -150,7 +150,7 @@ Public Sub GetData()
             Price = SourceSheet.Cells(i, .PriceCol).value
             CurrentKey = ExtractLetter(Code)
             CodeId = ExtractNumber(Code)
-            Set ItemObj = New Item
+            Set ItemObj = New item
 
             With ItemObj
                 .Code = Code

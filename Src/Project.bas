@@ -156,7 +156,7 @@ Public Sub DangerouslyImportComponentsFromSourceFolder()
         ' import the file, otherwise an error is thrown.
         If componentExists(file.Name) And file.Name <> "Project.bas" Then
             Dim component As VBComponent
-            Set component = thisProjectsVBComponents.Item(FSO.GetBaseName(file.Name))
+            Set component = thisProjectsVBComponents.item(FSO.GetBaseName(file.Name))
             
             ' Unable to remove document type components (Sheets, workbook)
             If component.Type <> vbext_ct_Document Then

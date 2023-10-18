@@ -22,92 +22,113 @@ Private Type TLabel
     Model           As Model
     Instances       As Integer
     Ws              As Worksheet
-    Product         As Item
-    Bussiness As Company
+    Product         As item
+    Bussiness       As Company
 End Type
 Private this        As TLabel
 
 Public Sub class_initialize()
     With this
-        .Row = 1
-        .Column = 1
+        .Row = 2
+        .Column = 2
         Set .Model = New Model
         .Instances = 0
         Set .Ws = ThisWorkbook.Sheets("LabelSheet")
-        Set .Product = New Item
+        Set .Product = New item
         Set .Bussiness = New Company
     End With
 End Sub
 
-Public Sub build(ByVal Item As Item, ByVal Bussiness As Company)
+Public Sub build(ByVal item As item, ByVal Bussiness As Company)
     With this
-        .Row = 1
-        .Column = 1
+        .Row = 2
+        .Column = 2
         Set .Model = Models.Default
         .Instances = 0
         .Ws = thiswowkbook.Sheets("LabelSheet")
-        Set .Product = Item
+        Set .Product = item
         Set .Bussiness = Bussiness
     End With
 End Sub
 
 Public Sub ToRange()
-    Dim LabelRange As range
-    Dim cell As range
+    Dim LabelRange  As range
+    Dim cell        As range
+
     With this
+        'Define Label Range in Starting Position and Model Dimensions
+        'Copy ModelGridMap to LabelRange
         Set LabelRange = .Ws.Cells(.Row, .Column).Resize(.Model.RowSize, .Model.ColumnSize)
         LabelRange = .Model.GridMap
         For Each cell In LabelRange
             Dim key As String
-            Dim KeyVal As Variant
-            Dim Direction As String
-            Dim places As Integer
-            Dim format As FormatSettings
-            'Check For Empty Prop - Call Fallback
-            key = cell.value
+            Dim keyVal As Variant
+            Dim origin As String
+KeyChecker:
+            key = cell.Value2
+            'Check CellVal and ItemObj Associated
             If key = "" Then
-                GoTo EmptySpace
+                GoTo ToNextCell
             End If
-            On Error Resume Next
-            KeyVal = CallByName(.Product, key, VbGet)
-            
-            On Error GoTo 0
-            
-            Direction = .Model.ProductResize(key)(0)
-            places = .Model.ProductResize(key)(1)
-            Set format = .Model.ProductFormat.Item(key)
-            If IsEmpty(KeyVal) Then
-                key = this.Model.FallBack(key)
-                KeyVal = CallByName(.Bussiness, key, VbGet)
-                Direction = .Model.CompanyResize(key)(0)
-                places = .Model.CompanyResize(key)(1)
-                Set format = .Model.ProductFormat.Item(key)
+            If .Model.KeyInModel(.Product, .Bussiness, key, keyVal) Then
+                If keyVal = "" Then
+                    If .Model.FallBack.Exists(key) Then
+                        key = .Model.FallBack(key)
+                        GoTo KeyChecker
+                    End If
+                    GoTo ToNextCell
+                End If
             End If
-            'ReDimention Cell Selection to Merge
-            Select Case Direction     'R,L,U,D
 
-                Case "R"
-                    Set cell = cell.Resize(1, 1 + places)
-                Case "L"
-                    Set cell = cell.offset(0, -places).Resize(1, places + 1)
-                Case "U"
-                    Set cell = cell.offset(-places, 0).Resize(places + 1, 1)
-                Case "D"
-                    Set cell = cell.Resize(1 + places, 1)
-            End Select
+            GoTo ToResizeCell
+ToResizeCell:
 
-            cell.Merge
-            
-            'Format Property Cell
+            Dim Direction As String
+            Dim Places As Integer
+            With .Model
+                If Not .SetResizeInst(key, Direction, Places) Then
+                    GoTo ToFormatCell
+                End If
+
+            End With
+
+
+            Redimension cell, Direction, Places
+ToFormatCell:
+            Dim format As FormatSettings
+
+            With .Model
+                If Not .SetFormat(key, format) Then
+                    GoTo ToNextCell
+                End If
+
+            End With
+
             ApplyFormat cell, format
-            
-            'Fill Item Values
-            cell.Value2 = KeyVal
-EmptySpace:
+            cell.value = keyVal
+
+ToNextCell:
         Next cell
-            
     End With
+
+    LabelRange.Columns.AutoFit
+    'LabelRange.Rows.AutoFit
 End Sub
+
+Private Function Redimension(ByRef cell As range, ByVal Direction As String, ByVal Places As Integer)
+    Select Case Direction
+        Case "R"
+            Set cell = cell.Resize(1, 1 + Places)
+        Case "L"
+            Set cell = cell.offset(0, -Places).Resize(1, Places + 1)
+        Case "U"
+            Set cell = cell.offset(-Places, 0).Resize(Places + 1, 1)
+        Case "D"
+            Set cell = cell.Resize(1 + Places, 1)
+        Case Else
+    End Select
+    cell.Merge
+End Function
 
 
 Public Property Get Row() As Integer
@@ -150,11 +171,11 @@ Public Property Set Ws(ByVal RHS As Worksheet)
     Set this.Ws = RHS
 End Property
 
-Public Property Get Product() As Item
+Public Property Get Product() As item
     Set Product = this.Product
 End Property
 
-Public Property Set Product(ByVal RHS As Item)
+Public Property Set Product(ByVal RHS As item)
     Set this.Product = RHS
 End Property
 
