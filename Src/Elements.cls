@@ -81,7 +81,7 @@ Private Sub class_initialize()
     End With
 End Sub
 
-Public Sub Update(ByVal Ws As Worksheet, ByVal Headers As Variant)
+Public Sub Update(ByVal ws As Worksheet, ByVal Headers As Variant)
 
 ' ClearContents and Format in previous Range
     If Not PreviousRange Is Nothing Then
@@ -103,19 +103,19 @@ Public Sub Update(ByVal Ws As Worksheet, ByVal Headers As Variant)
         ReDim ElemArr(1 To .values.Count, 0 To UBound(Headers))
         Dim elem As Object
     
-        Dim Row, Column As Integer: Row = 1
+        Dim row, column As Integer: row = 1
         For Each elem In .values
             
-            For Column = 0 To UBound(Headers)
+            For column = 0 To UBound(Headers)
                 
-                ElemArr(Row, Column) = CallByName(elem, HeaderMap(Headers(Column)), VbGet)
+                ElemArr(row, column) = CallByName(elem, HeaderMap(Headers(column)), VbGet)
                 
-            Next Column
-            Row = Row + 1
+            Next column
+            row = row + 1
             
             Dim ElemRange As range
-            Set ElemRange = Ws.range(Cells(range.Row, range.Column), _
-                                     Cells(range.Row, range.Columns.Count))
+            Set ElemRange = ws.range(Cells(range.row, range.column), _
+                                     Cells(range.row, range.Columns.Count))
             If elem.IsNew Then
                 Call ApplyFormat(ElemRange, .NewFormat)
             End If
@@ -180,5 +180,7 @@ End Property
 Public Property Set NewFormat(ByVal RHS As FormatSettings)
     Set NewFormat = RHS
     End Property
+
+
 
 

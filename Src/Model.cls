@@ -138,7 +138,7 @@ Private Sub class_initialize()
             .Add "BoxTotalPrice", Array(6, 1)
             .Add "DozLabel", Array(4, 2)
             .Add "DozTotalPrice", Array(6, 2)
-            '.Add "Date", Array("R", 1)
+            .Add "Date", Array(6, 3)
             .Add "Barcode", Array(3, 1)
 
         End With
@@ -147,7 +147,7 @@ Private Sub class_initialize()
             .Add "BoxTotalPrice", Array("R", 0)
             .Add "DozLabel", Array("R", 0)
             .Add "DozTotalPrice", Array("R", 0)
-            '.Add "Date", Array("R", 1)
+            .Add "Date", Array("R", 0)
             .Add "Barcode", Array("R", 2)
         End With
         With .LabelFormat
@@ -158,13 +158,14 @@ Private Sub class_initialize()
             .Add CreateFormat(datatype.ShortNumber, Themes.light), "DozTotalPrice"
             .Add CreateFormat(datatype.Barcode, Themes.dark), "Barcode"
 
+            .Add CreateFormat(datatype.Date, Themes.dark), "Date"
         End With
         With .LabelValues
             .Add "BoxLabel", "Box()"
             .Add "BoxTotalPrice", 88
             .Add "DozLabel", "Docena()"
             .Add "DozTotalPrice", 99
-            '.Add "Date", Array("R", 1)
+            .Add "Date", Now
             .Add "Barcode", "EmptyBC"
         End With
 
@@ -231,7 +232,7 @@ Private Function CreateFormat(ByVal datatype As datatype, ByVal Theme As Themes)
                 .Shirnk = False
                 .NumberFormat = "_($* #,##0.00_);_($* (#,##0.00);_($* ""-""??_);_(@_)"
             Case TitleText
-                .FontName = "Protector"
+                .FontName = "BABAPRO FONT"
                 .FontSize = 28
                 .Bold = False
                 .HAlign = xlCenter
@@ -507,4 +508,5 @@ End Property
 Public Property Set LabelFormat(ByVal RHS As Collection)
     Set this.LabelFormat = RHS
 End Property
+
 

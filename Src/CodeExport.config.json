@@ -1,16 +1,13 @@
 {
 	"Module Paths": {
 		"ThisWorkbook": "ThisWorkbook.cls",
-		"TestModule1": "TestModule1.bas",
 		"DynamicTable": "DynamicTable.cls",
 		"Headers": "Headers.cls",
 		"Elements": "Elements.cls",
 		"FormatSettings": "FormatSettings.cls",
 		"PublicFunctions": "PublicFunctions.bas",
 		"Item": "Item.cls",
-		"IDataTable": "IDataTable.cls",
 		"StaticTable": "StaticTable.cls",
-		"Project": "Project.bas",
 		"Company": "Company.cls",
 		"Label": "Label.cls",
 		"Model": "Model.cls"
@@ -20,13 +17,6 @@
 			"Name": "Scripting",
 			"Description": "Microsoft Scripting Runtime",
 			"GUID": "{420B2830-E718-11CF-893D-00A0C9054228}",
-			"Major": 1,
-			"Minor": 0
-		},
-		{
-			"Name": "VBScript_RegExp_10",
-			"Description": "Microsoft VBScript Regular Expressions 1.0",
-			"GUID": "{3F4DACA7-160D-11D2-A8E9-00104B365C9F}",
 			"Major": 1,
 			"Minor": 0
 		},

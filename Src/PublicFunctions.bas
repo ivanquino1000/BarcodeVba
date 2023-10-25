@@ -13,6 +13,37 @@ Public Sub ApplyFormat(ByVal rng As range, ByVal format As FormatSettings)
         .NumberFormat = format.NumberFormat
     End With
 End Sub
+
+Public Function getLastRow(ByVal column As Variant, ByRef ws As Worksheet) As Integer
+With ws
+  getLastRow = .Cells(.Rows.Count, column).End(xlUp).row
+End With
+End Function
+Public Function GetParentPath(ByVal path As String) As String
+    Dim currentPath As String
+
+    currentPath = path
+
+    ' Check if the current path ends with a backslash
+    If Right(currentPath, 1) = "\" Then
+        ' If it does, remove the trailing backslash
+        currentPath = Left(currentPath, Len(currentPath) - 1)
+    End If
+    ' Use VBA's built-in functions to extract the parent path
+    GetParentPath = Left(currentPath, InStrRev(currentPath, "\"))
+
+    
+End Function
+
+
+Sub poasld()
+    Dim fileD As Date: fileD = FileDateTime(FindLatestXLSXFile(Environ("USERPROFILE") & "\Downloads\"))
+    Debug.Print fileD
+    If Int(fileD) = Int(Now) Then
+        Debug.Print "TODAY: "; Int(fileD), Int(Now)
+    End If
+    Debug.Print Int(fileD), Int(Now)
+End Sub
 Sub LabelTest()
     'TODO LIST
     'Label Header Custom Format Static
@@ -33,6 +64,11 @@ Sub LabelTest()
         .Cells.ClearContents
         .Cells.ClearFormats
     End With
+     With Lab.Product
+        .Description = ""
+        .Cost = 0
+        .Supplier = ""
+    End With
     Lab.ToRange
     
     
@@ -49,9 +85,9 @@ Sub MergeRange()
         Case "R"
             Set cell = cell.Resize(1, 1 + Places)
         Case "L"
-            Set cell = cell.offset(0, -Places).Resize(1, Places + 1)
+            Set cell = cell.Offset(0, -Places).Resize(1, Places + 1)
         Case "U"
-            Set cell = cell.offset(-Places, 0).Resize
+            Set cell = cell.Offset(-Places, 0).Resize
         Case "D"
             Set cell = cell.Resize(1 + Places, 1)
     End Select
@@ -122,7 +158,7 @@ Public Function ExtractNumber(ByVal inputString As String) As Variant
     With NumReg
         .Global = True
         .IgnoreCase = True
-        .Pattern = "^(\w+\d+)"
+        .Pattern = "\d+"
     End With
 
     If NumReg.test(inputString) Then
@@ -231,13 +267,15 @@ Function FindLatestXLSXFile(ByVal pathDir As String) As String
     For Each file In fileSystem.GetFolder(folderPath).Files
         ' Check if the file is an XLSX file and compare its last modified date
         If LCase(Right(file.Name, 5)) = ".xlsx" And file.DateLastModified > latestDate Then
-            latestFile = file.Path
+            latestFile = file.path
             latestDate = file.DateLastModified
         End If
     Next file
     'Debug.Print latestFile
     FindLatestXLSXFile = latestFile
 End Function
+
+
 
 
 

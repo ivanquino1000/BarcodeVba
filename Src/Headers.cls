@@ -34,14 +34,14 @@ Private Sub class_initialize()
     End With
 End Sub
 
-Public Sub Update(ByVal Ws As Worksheet)
+Public Sub Update(ByVal ws As Worksheet)
     On Error GoTo err
     Dim Header As Variant
     Dim i As Long
     For Each Header In this.values
     
-        Ws.Cells( _
-        this.range.Row, this.range.Column + i _
+        ws.Cells( _
+        this.range.row, this.range.column + i _
                        ).value = Header
 
         i = i + 1
@@ -95,5 +95,7 @@ End Property
 Public Property Set format(ByVal RHS As FormatSettings)
     Set this.format = RHS
 End Property
+
+
 
 

@@ -26,10 +26,10 @@ Private this As TCompany
 
 Private Sub class_initialize()
     With this
-        .Address = "Octavio Mu�oz Najar 202"
+        .Address = "Octavio Munoz Najar 202"
         .Name = "SORAZA"
         .Ruc = "20608875426"
-        .Email = "sorazaimport@gmail.com"
+        .Email = "sorazaimport30@gmail.com"
         .Phone = "958190331"
         .facebook = "tinyurl.com/soraza"
     End With
@@ -68,3 +68,4 @@ End Property
 Public Property Let Name(ByVal RHS As String)
     this.Name = RHS
 End Property
+

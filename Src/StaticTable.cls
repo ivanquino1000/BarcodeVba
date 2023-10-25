@@ -24,47 +24,71 @@ Public Event DataGotten(ByVal elem_num As Long)
 Public WithEvents HeadersComp As Headers
 Attribute HeadersComp.VB_VarHelpID = -1
 
+
+
+Private Type SourceTab
+    FirstRow        As Long
+    CodeCol         As String
+    NameCol         As String
+    PriceCol        As String
+End Type
+
+Private SourceTableRef As SourceTab
+
 Private Type TStaticTable
-    Row             As Integer
-    Column          As Integer
+    row             As Integer
+    column          As Integer
     range           As range
-    Ws              As Worksheet
+    ws              As Worksheet
     Headers         As Headers
     ElementsRange   As range
     PreviousElemRange As range
     ElementsCounter As Integer
     ElementsFormat  As FormatSettings
+    SrcBookPath     As String
+    ElementsRefId   As Dictionary
 End Type
+
 Private this        As TStaticTable
+
 
 
 Private Sub class_initialize()
     With this
-        .Row = 1
-        .Column = 1
+        .row = 1
+        .column = 1
 
-        Set .Ws = ThisWorkbook.ActiveSheet
+        '.SrcBookPath = FindLatestXLSXFile(Environ("USERPROFILE") & "\Downloads\")
+        Set .ws = ThisWorkbook.ActiveSheet
         Set .ElementsFormat = New FormatSettings
+        Set .ElementsRefId = New Dictionary
         With .ElementsFormat
             .BgColor = RGB(249, 244, 245)
             .FontColor = vbBlack
-            .FontName = "Tw Cen MT"
-            .FontSize = 14
+            .FontName = "Bahnschrift SemiLight"
+            .FontSize = 16
         End With
+
     End With
     Set HeadersComp = New Headers
+    With SourceTableRef
+        .CodeCol = "B"
+        .FirstRow = 4
+        .NameCol = "E"
+        .PriceCol = "K"
+    End With
 
 End Sub
 
-Public Sub init(ByVal Row As Integer, _
-        ByVal Column As Integer, _
-        ByVal Ws As Worksheet, _
+Public Sub init(ByVal row As Integer, _
+        ByVal column As Integer, _
+        ByVal ws As Worksheet, _
         ByVal Headers As Variant _
         )
     With this
-        .Row = Row
-        .Column = Column
-        Set .Ws = Ws
+        .row = row
+        .column = column
+        Set .ws = ws
         With HeadersComp
             .values = Headers
         End With
@@ -75,15 +99,224 @@ Public Sub init(ByVal Row As Integer, _
 
 End Sub
 
+'TODO: IMPLEMENT LOGIC FOR LAST FILE UPDATED TO BE DATA SOURCE
+'TODO: DOWNLOADS/ LASTSESSION
+Public Sub GetData()
+
+    On Error GoTo getDataError
+
+    Dim InitTime, EndTime As Double
+    InitTime = Timer
+
+    Dim BackupBookPath As String
+    BackupBookPath = GetParentPath(ThisWorkbook.path) & "SessionBackup" & "\LastSessionItems.xlsx"
+    Dim SourceBook  As Workbook
+
+    On Error Resume Next
+    With this
+        .SrcBookPath = FindLatestXLSXFile(Environ("USERPROFILE") & "\Downloads\")
+        Set SourceBook = Workbooks.Open(.SrcBookPath)
+
+        If err.Number <> 0 Then
+            On Error GoTo 0
+            MsgBox "No Se Encontro un Ningun Archivo en la ruta: " & .SrcBookPath & vbNewLine & _
+                    "Se Usaran los Datos de la Ultima Sesion Termida"
+            GoTo UseBackup
+        End If
+
+        On Error GoTo 0
+        If Int(FileDateTime(.SrcBookPath)) <> Int(Now) Or _
+                Int(FileDateTime(.SrcBookPath)) < Int(FileDateTime(BackupBookPath)) Then
+            MsgBox "No Se Encontro Ningun Archivo de Hoy Dia: " & Int(Now) & vbNewLine & _
+                    "Se Usaran los Datos de la Ultima Sesion" & vbNewLine & _
+                    "Nota: Descarga de la Web y reinicia este libro para usar datos Actuales"
+            SourceBook.Close False
+            GoTo UseBackup
+        End If
+
+        GoTo ProcessData
+    End With
+
+UseBackup:
+    On Error Resume Next
+    Set SourceBook = Workbooks.Open(BackupBookPath)
+
+    If err.Number <> 0 Then
+        On Error GoTo 0
+        MsgBox "Libro de Respaldo No Encontrado: FATAL ERROR "
+        Exit Sub
+    End If
+    GoTo ProcessData
+
+ProcessData:
+    Dim SourceSheet As Worksheet: Set SourceSheet = SourceBook.Worksheets(1)
+
+    'SET_TABLE_REFERENCES
+    Dim ItemsCounter As Long
+    Dim ItemsLastRow As Long
+    Dim CodesRange  As range
+    Dim NameRange   As range
+    Dim PriceRange  As range
+    Dim TableRange  As range
+    Dim regex       As New RegExp
+
+    With SourceTableRef
+        ItemsLastRow = getLastRow(.CodeCol, SourceSheet)
+        SetRangeRefences CodesRange, SourceSheet, .FirstRow, .CodeCol, ItemsLastRow
+        SetRangeRefences NameRange, SourceSheet, .FirstRow, .NameCol, ItemsLastRow
+        SetRangeRefences PriceRange, SourceSheet, .FirstRow, .PriceCol, ItemsLastRow
+        SetRangeRefences TableRange, SourceSheet, .FirstRow, .CodeCol, ItemsLastRow, .PriceCol
+    End With
+
+
+    'CLEAR_REGEX_NOTMATCHING
+    Dim codearr     As Variant
+    codearr = Application.Transpose(CodesRange)
+
+    CleanCodes codearr, "^[A-Z,a-z]{1,2}\d{3,4}\b"
+    CodesRange.value = Application.Transpose(codearr)
+
+    'SORT_SELECTION
+    With TableRange
+        .Sort key1:=.Columns(1), order1:=xlAscending, Header:=xlNo
+    End With
+
+    'SET_TABLE_REFERENCES
+    With SourceTableRef
+        ItemsLastRow = getLastRow(.CodeCol, SourceSheet)
+        SetRangeRefences CodesRange, SourceSheet, .FirstRow, .CodeCol, ItemsLastRow
+        SetRangeRefences NameRange, SourceSheet, .FirstRow, .NameCol, ItemsLastRow
+        SetRangeRefences PriceRange, SourceSheet, .FirstRow, .PriceCol, ItemsLastRow
+        ItemsCounter = ItemsLastRow - .FirstRow + 1
+    End With
+
+
+    'SAVE_TO_TABLE_ELEMENTS_REFERENCE_ID
+
+    Dim nameArr, priceArr, tableArr As Variant
+    codearr = Application.Transpose(CodesRange)
+    nameArr = Application.Transpose(NameRange)
+    priceArr = Application.Transpose(PriceRange)
+
+    With this
+        .ElementsCounter = ItemsCounter
+        UpdateRanges
+        .ElementsRange.Value2 = CombineArr(codearr, nameArr, priceArr)
+    End With
+
+    StoreCodeIds codearr
+
+    SourceBook.Close True
+    EndTime = Timer
+    Debug.Print "GetData - Performance:", EndTime - InitTime & " sec"
+
+    Update
+    Exit Sub
+
+getDataError:
+    Debug.Print "getDataError:  "; err.Description
+    If Not SourceBook Is Nothing And SourceSheet.Visible Then
+        SourceBook.Close False
+    End If
+
+End Sub
+
+Private Function CombineArr(ByVal arr1 As Variant, ByVal arr2 As Variant, ByVal arr3 As Variant)
+    Dim i           As Integer
+    Dim arr         As Variant
+    ReDim arr(1 To UBound(arr1), 1 To 3)
+    For i = 1 To UBound(arr1)
+        arr(i, 1) = arr1(i)
+        arr(i, 2) = arr2(i)
+        arr(i, 3) = arr3(i)
+    Next i
+    CombineArr = arr
+End Function
+
+
+Private Sub CleanCodes(ByRef arr As Variant, ByVal regexPattern As String)
+    Dim reg         As New RegExp
+    Dim i           As Integer
+
+    With reg
+        .Global = True
+        .Pattern = regexPattern
+    End With
+
+    For i = LBound(arr) To UBound(arr)
+
+        Dim Code    As String
+        Code = arr(i)
+        If Code = "" Then
+            GoTo nextId
+        End If
+        If Not reg.test(Code) Then
+            arr(i) = ""
+            GoTo nextId
+        End If
+        arr(i) = UCase(Code)
+nextId:
+    Next i
+End Sub
+
+Private Sub StoreCodeIds(ByRef codearr As Variant)
+
+    'Save SourceBook Elements to ElementsComp Collection - Dictionary
+
+    Dim IdValuesMap As New Dictionary
+    Dim i           As Long
+
+    Dim IdValues    As Variant: IdValues = Array("-1")
+    Dim CurrentKey, PrevKey As String
+    Dim CodeId, TempIdValCount As Long
+
+    PrevKey = ExtractLetter(codearr(1))
+    For i = LBound(codearr) To UBound(codearr)
+        CodeId = ExtractNumber(codearr(i))
+        CurrentKey = ExtractLetter(codearr(i))
+        If CurrentKey = PrevKey Then
+            'Push To IdValues
+            TempIdValCount = TempIdValCount + 1
+            ReDim Preserve IdValues(0 To TempIdValCount)
+            IdValues(TempIdValCount - 1) = CodeId
+            PrevKey = CurrentKey
+        Else            'Unmatching CodeKeys - Store PrevKey,IdValues[] - Reset IdValues - Init CodeId
+            'ElementsComp.CodeIds.Add PrevKey, IdValues
+            IdValuesMap.Add PrevKey, IdValues
+            ReDim IdValues(0 To 0)            'Erase IdValues
+            IdValues(0) = CodeId
+            PrevKey = CurrentKey
+            TempIdValCount = 0
+        End If
+
+    Next i
+    IdValuesMap.Add CurrentKey, IdValues
+    Set this.ElementsRefId = IdValuesMap
+
+End Sub
+
+Public Sub SetRangeRefences(ByRef range As range, ByRef ws As Worksheet, _
+        ByVal startRow As Variant, ByVal startColumn As Variant, _
+        ByVal endRow As Variant, Optional endColumn As Variant)
+    If IsMissing(endColumn) Then
+        Set range = ws.range(startColumn & startRow & ":" & _
+                startColumn & endRow)
+        Exit Sub
+    End If
+    Set range = ws.range( _
+            startColumn & startRow & ":" & _
+            endColumn & endRow)
+
+End Sub
 Public Sub Update()
     UpdateRanges
     With this
-        .Ws.Select
-        HeadersComp.Update .Ws
+        .ws.Select
+        HeadersComp.Update .ws
         ElementsUpdate
-        .Ws.Columns.AutoFit
+        .ws.Columns.AutoFit
     End With
-    
+
 End Sub
 
 Public Sub ClearPrevRange()
@@ -97,15 +330,15 @@ Public Sub ClearPrevRange()
 End Sub
 
 Public Sub ElementsUpdate()
-    
+
     With this
         Call ApplyFormat(.ElementsRange, .ElementsFormat)
-        
-        .ElementsRange.Sort key1:=.ElementsRange.Columns(UBound(HeadersComp.values) + 1), _
-      order1:=xlDescending, Header:=xlNo
-      
+
+        '        .ElementsRange.Sort key1:=.ElementsRange.Columns(UBound(HeadersComp.values) + 1), _
+                 '                order1:=xlDescending, Header:=xlNo
+
         Set .PreviousElemRange = .ElementsRange
-        
+
         .range.EntireRow.RowHeight = 40
     End With
 
@@ -117,9 +350,9 @@ End Sub
 
 Private Sub UpdateRanges()
     With HeadersComp
-        Set .range = this.Ws.range( _
-                this.Ws.Cells(this.Row, this.Column), _
-                this.Ws.Cells(this.Row, this.Column + UBound(.values)) _
+        Set .range = this.ws.range( _
+                this.ws.Cells(this.row, this.column), _
+                this.ws.Cells(this.row, this.column + UBound(.values)) _
                 )
     End With
 
@@ -128,9 +361,9 @@ Private Sub UpdateRanges()
         If .ElementsCounter = 0 Then
             EmptyElements = 1
         End If
-        Set .ElementsRange = this.Ws.range( _
-                this.Ws.Cells(this.Row + 1, this.Column), _
-                this.Ws.Cells(this.Row + EmptyElements + .ElementsCounter, this.Column + UBound(HeadersComp.values)) _
+        Set .ElementsRange = this.ws.range( _
+                this.ws.Cells(this.row + 1, this.column), _
+                this.ws.Cells(this.row + EmptyElements + .ElementsCounter, this.column + UBound(HeadersComp.values)) _
                 )
         Set .range = Union( _
                 HeadersComp.range, _
@@ -145,14 +378,14 @@ Private Sub HeadersComp_HeadersUpdated(ByVal Headers As Variant)
     UpdateRanges
 End Sub
 
-Public Property Let Row(ByVal value As Integer)
-    this.Row = value
+Public Property Let row(ByVal value As Integer)
+    this.row = value
     UpdateRanges
 End Property
 
 
-Public Property Let Column(ByVal value As Integer)
-    this.Column = value
+Public Property Let column(ByVal value As Integer)
+    this.column = value
     UpdateRanges
 End Property
 
@@ -199,22 +432,22 @@ Public Property Set range(ByVal value As range)
     Set this.range = value
 End Property
 
-Public Property Get Row() As Integer
-    Row = this.Row
+Public Property Get row() As Integer
+    row = this.row
 End Property
 
 
 
-Public Property Get Ws() As Worksheet
-    Set Ws = this.Ws
+Public Property Get ws() As Worksheet
+    Set ws = this.ws
 End Property
 
-Public Property Set Ws(ByVal value As Worksheet)
-    Set this.Ws = value
+Public Property Set ws(ByVal value As Worksheet)
+    Set this.ws = value
 End Property
 
-Public Property Get Column() As Integer
-    Column = this.Column
+Public Property Get column() As Integer
+    column = this.column
 End Property
 
 
@@ -229,5 +462,24 @@ End Property
 Private Sub IDataTable_Update()
     err.Raise 5                                  'TODO implement interface member
 End Sub
+
+
+Public Property Get SrcBookPath() As String
+    SrcBookPath = this.SrcBookPath
+End Property
+
+Public Property Let SrcBookPath(ByVal RHS As String)
+    this.SrcBookPath = RHS
+End Property
+
+
+
+Public Property Get ElementsRefId() As Dictionary
+    Set ElementsRefId = this.ElementsRefId
+End Property
+
+Public Property Set ElementsRefId(ByVal RHS As Dictionary)
+    Set this.ElementsRefId = RHS
+End Property
 
 

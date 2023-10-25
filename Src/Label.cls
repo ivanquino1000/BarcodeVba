@@ -17,11 +17,11 @@ Public Enum Models
 End Enum
 
 Private Type TLabel
-    Row             As Integer
-    Column          As Integer
+    row             As Integer
+    column          As Integer
     Model           As Model
     Instances       As Integer
-    Ws              As Worksheet
+    ws              As Worksheet
     Product         As item
     Bussiness       As Company
 End Type
@@ -29,11 +29,11 @@ Private this        As TLabel
 
 Public Sub class_initialize()
     With this
-        .Row = 2
-        .Column = 2
+        .row = 2
+        .column = 2
         Set .Model = New Model
         .Instances = 0
-        Set .Ws = ThisWorkbook.Sheets("LabelSheet")
+        Set .ws = ThisWorkbook.Sheets("LabelSheet")
         Set .Product = New item
         Set .Bussiness = New Company
     End With
@@ -41,11 +41,11 @@ End Sub
 
 Public Sub build(ByVal item As item, ByVal Bussiness As Company)
     With this
-        .Row = 2
-        .Column = 2
+        .row = 2
+        .column = 2
         Set .Model = Models.Default
         .Instances = 0
-        .Ws = thiswowkbook.Sheets("LabelSheet")
+        .ws = thiswowkbook.Sheets("LabelSheet")
         Set .Product = item
         Set .Bussiness = Bussiness
     End With
@@ -58,14 +58,15 @@ Public Sub ToRange()
     With this
         'Define Label Range in Starting Position and Model Dimensions
         'Copy ModelGridMap to LabelRange
-        Set LabelRange = .Ws.Cells(.Row, .Column).Resize(.Model.RowSize, .Model.ColumnSize)
+        Set LabelRange = .ws.Cells(.row, .column).Resize(.Model.RowSize, .Model.ColumnSize)
         LabelRange = .Model.GridMap
         For Each cell In LabelRange
             Dim key As String
             Dim keyVal As Variant
             Dim origin As String
-KeyChecker:
+
             key = cell.Value2
+KeyChecker:
             'Check CellVal and ItemObj Associated
             If key = "" Then
                 GoTo ToNextCell
@@ -120,9 +121,9 @@ Private Function Redimension(ByRef cell As range, ByVal Direction As String, ByV
         Case "R"
             Set cell = cell.Resize(1, 1 + Places)
         Case "L"
-            Set cell = cell.offset(0, -Places).Resize(1, Places + 1)
+            Set cell = cell.Offset(0, -Places).Resize(1, Places + 1)
         Case "U"
-            Set cell = cell.offset(-Places, 0).Resize(Places + 1, 1)
+            Set cell = cell.Offset(-Places, 0).Resize(Places + 1, 1)
         Case "D"
             Set cell = cell.Resize(1 + Places, 1)
         Case Else
@@ -131,20 +132,20 @@ Private Function Redimension(ByRef cell As range, ByVal Direction As String, ByV
 End Function
 
 
-Public Property Get Row() As Integer
-    Row = this.Row
+Public Property Get row() As Integer
+    row = this.row
 End Property
 
-Public Property Let Row(ByVal RHS As Integer)
-    this.Row = RHS
+Public Property Let row(ByVal RHS As Integer)
+    this.row = RHS
 End Property
 
-Public Property Get Column() As Integer
-    Column = this.Column
+Public Property Get column() As Integer
+    column = this.column
 End Property
 
-Public Property Let Column(ByVal RHS As Integer)
-    this.Column = RHS
+Public Property Let column(ByVal RHS As Integer)
+    this.column = RHS
 End Property
 
 Public Property Get Model() As Model
@@ -163,12 +164,12 @@ Public Property Let Instances(ByVal RHS As Integer)
     this.Instances = RHS
 End Property
 
-Public Property Get Ws() As Worksheet
-    Set Ws = this.Ws
+Public Property Get ws() As Worksheet
+    Set ws = this.ws
 End Property
 
-Public Property Set Ws(ByVal RHS As Worksheet)
-    Set this.Ws = RHS
+Public Property Set ws(ByVal RHS As Worksheet)
+    Set this.ws = RHS
 End Property
 
 Public Property Get Product() As item
@@ -187,4 +188,5 @@ End Property
 Public Property Set Bussiness(ByVal RHS As Company)
     Set this.Bussiness = RHS
 End Property
+
 
