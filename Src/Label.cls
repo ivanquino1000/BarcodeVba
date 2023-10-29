@@ -51,6 +51,8 @@ Public Sub build(ByVal item As item, ByVal Bussiness As Company)
     End With
 End Sub
 
+'TODO: ON EMPTY MANDATORY ITEMS.METADATA => EXIT AND SHOW AN WARNING MESSAGE
+
 Public Sub ToRange()
     Dim LabelRange  As range
     Dim cell        As range
@@ -79,6 +81,7 @@ KeyChecker:
                     End If
                     GoTo ToNextCell
                 End If
+                
             End If
 
             GoTo ToResizeCell

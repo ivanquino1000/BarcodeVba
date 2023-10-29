@@ -15,10 +15,11 @@ Public Sub ApplyFormat(ByVal rng As range, ByVal format As FormatSettings)
 End Sub
 
 Public Function getLastRow(ByVal column As Variant, ByRef ws As Worksheet) As Integer
-With ws
-  getLastRow = .Cells(.Rows.Count, column).End(xlUp).row
-End With
+    With ws
+        getLastRow = .Cells(.Rows.Count, column).End(xlUp).row
+    End With
 End Function
+
 Public Function GetParentPath(ByVal path As String) As String
     Dim currentPath As String
 
@@ -32,56 +33,97 @@ Public Function GetParentPath(ByVal path As String) As String
     ' Use VBA's built-in functions to extract the parent path
     GetParentPath = Left(currentPath, InStrRev(currentPath, "\"))
 
-    
+
+End Function
+Public Function ConvertToNumbers(ByVal arr As Variant) As Variant
+    Dim reg         As New RegExp
+
+    Dim Numbers     As Variant
+    With reg
+        .Global = True
+        .IgnoreCase = True
+        .Pattern = "\d+"
+    End With
+    Dim i           As Long
+    ReDim Numbers(LBound(arr) To UBound(arr))
+    For i = LBound(arr) To UBound(arr)
+        Numbers(i) = reg.Execute(arr(i))(0)
+    Next i
+    ConvertToNumbers = Numbers
 End Function
 
+Public Function MissingNumbers(ByVal arr As Variant) As Variant
+    'Assumptions:
+    'Takes a Sorted  Numeric Array
 
-Sub poasld()
-    Dim fileD As Date: fileD = FileDateTime(FindLatestXLSXFile(Environ("USERPROFILE") & "\Downloads\"))
-    Debug.Print fileD
-    If Int(fileD) = Int(Now) Then
-        Debug.Print "TODAY: "; Int(fileD), Int(Now)
+    'Empty Array
+    If IsEmpty(arr) Then
+        Exit Function
     End If
-    Debug.Print Int(fileD), Int(Now)
-End Sub
+
+    Dim Mia         As Variant: Mia = Array()
+    Dim i, j        As Long
+
+    'Save Missings until Lowest Array Value
+    Dim LowestValue As Long: LowestValue = arr(LBound(arr))
+    Dim HighestValue As Long: HighestValue = arr(UBound(arr))
+    'Handle_Missing_Values
+    If LowestValue > 1 Then
+
+        ReDim Mia(0 To LowestValue - 2)
+        For j = 0 To LowestValue - 2
+            Mia(j) = j + 1
+        Next j
+    End If
+    'Store Missing in array
+    Dim k           As Long
+
+    For i = arr(LBound(arr)) To arr(UBound(arr))
+        If arr(k) = i Then
+            k = k + 1
+        Else
+            ReDim Preserve Mia(0 To UBound(Mia) + 1)
+            Mia(UBound(Mia)) = i
+        End If
+    Next i
+    For i = 0 To UBound(Mia)
+        Debug.Print Mia(i)
+    Next i
+    MissingNumbers = Mia
+End Function
+
 Sub LabelTest()
     'TODO LIST
-    'Label Header Custom Format Static
-    'Implement Lables in Model Obj
-    'AutoCalculate Label on Item
-    'DATATABLE
-    'Implement New ItemCode
-    'List Table -Change Update Elements Collection
-    'List Table - DeleteDoubleClick + Confirmation Msg
-    '-- Search in a Collection On Id
-    '-- headers Mapper
-    
-    
-    Dim Product As New item
-    Dim Company As New Company
-    Dim Lab As New Label
+    'Empty Value on Fallback ISEMPTY(Array)
+'SHRINK TO FIT ALL CELLS
+'
+
+    Dim Product     As New item
+    Dim Company     As New Company
+    Dim Lab         As New Label
     With ThisWorkbook.Sheets("LabelSheet")
         .Cells.ClearContents
         .Cells.ClearFormats
     End With
-     With Lab.Product
+    With Lab.Product
         .Description = ""
         .Cost = 0
         .Supplier = ""
     End With
     Lab.ToRange
-    
-    
+
+
 End Sub
+
 Sub MergeRange()
-    Dim cell As range: Set cell = ThisWorkbook.Sheets("LabelSheet").Cells(5, 5)
-    Dim Direction As String
-    Dim Places As Integer
+    Dim cell        As range: Set cell = ThisWorkbook.Sheets("LabelSheet").Cells(5, 5)
+    Dim Direction   As String
+    Dim Places      As Integer
 
     Direction = "L"
     Places = 3
 
-    Select Case Direction 'R, L, U, D
+    Select Case Direction    'R, L, U, D
         Case "R"
             Set cell = cell.Resize(1, 1 + Places)
         Case "L"
@@ -100,7 +142,7 @@ End Sub
 
 Function BubbleSort(arr As Variant) As Variant
     Dim i As Long, j As Long
-    Dim temp        As Double
+    Dim Temp        As Double
     Dim n           As Long
 
     n = UBound(arr)
@@ -109,9 +151,9 @@ Function BubbleSort(arr As Variant) As Variant
         For j = 1 To n - i
             If arr(j) > arr(j + 1) Then
                 ' Swap arr(j) and arr(j + 1)
-                temp = arr(j)
+                Temp = arr(j)
                 arr(j) = arr(j + 1)
-                arr(j + 1) = temp
+                arr(j + 1) = Temp
             End If
         Next j
     Next i
@@ -121,20 +163,19 @@ End Function
 
 
 Sub test()
-    Dim arr1, arr2  As Variant
-    arr1 = Array(1, 4, 5, 7, 8, 123, 9)
-    arr2 = Array(3, 5)
+    Dim arr1, Arr2  As Variant
+    arr1 = Array(2, 4, 5, 7, 8, 12)
+    Arr2 = Array(3, 5)
     Dim S, E        As Double
     S = Timer
 
-    arr3 = FindMissCodeId(arr1, arr2)
+    arr3 = MissingNumbers(arr1)
 
     E = Timer
     Debug.Print "Performance - FindMissing:", E - S, "sec"
 
-
-
 End Sub
+
 
 Public Function CodeBuilder(ByVal CodeLet As String, ByVal CodeId As Integer) As String
     Dim Code        As String
@@ -202,8 +243,8 @@ Public Function JoinArrays(ByVal MainNumArr As Variant, _
     ReDim CombinedArray(0 To UBound(MainNumArr) + UBound(OptionalNumArr) + 1)
 
     ' Merge both arrays into combinedArray
-    
-    
+
+
     'Copy InitialArray to CombinedArray
     For i = LBound(MainNumArr) To UBound(MainNumArr)
         CombinedArray(i) = MainNumArr(i)
@@ -232,22 +273,7 @@ Public Function JoinArrays(ByVal MainNumArr As Variant, _
     ReDim Preserve CombinedArray(1 To k)  '- 1)
     JoinArrays = CombinedArray
 End Function
-Public Function FindMissing(ByVal MainNumArr As Variant, _
-        Optional ByVal OptionalNumArr As Variant = Empty) As Integer
 
-    Dim CombinedArray As Variant
-    ' Sort the merged and deduplicated array using Bubble Sort
-    CombinedArray = BubbleSort(JoinArrays())
-    Dim elem        As Integer
-    For elem = 1 To UBound(CombinedArray)
-        Debug.Print CombinedArray(elem)
-
-    Next elem
-    ' Iterate for First Missing Id
-    For i = LBound(CombinedArray) To UBound(CombinedArray)
-    Next i
-
-End Function
 
 Function FindLatestXLSXFile(ByVal pathDir As String) As String
 

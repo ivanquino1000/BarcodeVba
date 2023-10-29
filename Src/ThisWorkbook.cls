@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-
+'ON MAIN SHEET REMAP OVERRIDE DEFAULT KEYS AND BUTTONS
 Const IntroductoryMessage As String = "Welcome to Codebar Printer You will first need to know " & _
         vbNewLine & "       PASOS A SEGUIR ANTES DE INICIAR:        " & _
         vbNewLine & "- Descargar de internet la base de datos" & _
@@ -30,6 +30,9 @@ Attribute resultsTable.VB_VarHelpID = -1
 Private WithEvents databaseTable As StaticTable
 Attribute databaseTable.VB_VarHelpID = -1
 
+'TODO : IMPLEMENT USER INPUT MESSAGES - PRINTER NAME -COMPANY
+'CUSTOM KEY TO CHANGE SUPPLIER
+'TODO: On items  !exist documents  => Move From APPResources
 Private Sub Workbook_Open()
     Application.EnableAutoComplete = False
     Application.ScreenUpdating = False
@@ -78,10 +81,50 @@ Private Sub Workbook_Open()
     Application.EnableEvents = True
 End Sub
 
+
+'TODO: On Double Click Delete Element Collection - Accept DialogBox
+'TODO: On SearchBar - Create New Item - Send Random Key
+
+
 Private Sub Workbook_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As range, Cancel As Boolean)
     If Sh.Name <> "MainSheet" Then
         Exit Sub
     End If
+
+    'ResultsTable_To_ListTable
+    If Not Intersect(Target, resultsTable.ElementsRange) Is Nothing Then
+
+        Dim CodeRange As range
+        Dim NameRange As range
+        Dim PriceRange As range
+        Dim Product As New item
+
+        With resultsTable.ElementsRange
+            Set CodeRange = .Columns(1)
+            Set NameRange = .Columns(2)
+            Set PriceRange = .Columns(3)
+            Debug.Print CodeRange.Address, _
+            NameRange.Address, _
+            PriceRange.Address
+        End With
+
+        With Product
+            .Code = CodeRange.Cells(Target.row).Value2
+            .Name = NameRange.Cells(Target.row).Value2
+            .SellingPrice = PriceRange.Cells(Target.row).Value2
+        End With
+
+        If Not Intersect(Target, CodeRange) Is Nothing Then
+            Product.Code = "AC0001"
+        End If
+        
+        
+        listTable.ElementsComp.values.Add Product
+    End If
+
+
+
+
     '
     '
     '        '
@@ -147,6 +190,13 @@ Private Sub Workbook_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As 
     '
     '        End If
 End Sub
+
+
+'TODO: ExactMatch - AutoInsertKey - Highlight Option
+'TODO: On Headers Changed - Correct Auto
+'TODO: On Elemets Range Changed - Update Element Collection
+'TODO: On Elemets RANGE COSTO - WHOLE - BOX => UNITARY In Table
+'Labels as placeholders
 
 Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As range)
 

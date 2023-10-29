@@ -43,8 +43,6 @@ Public Sub init(ByVal IName As String, ByVal IAddress As String, ByVal IRuc As S
     End With
 End Sub
 
-
-
 Public Property Get Address() As String
     Address = this.Address
 End Property

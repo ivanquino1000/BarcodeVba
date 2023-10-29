@@ -8,6 +8,11 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
+Const FileNotFoundMsg As String = "No Se Encontro un Ningun Archivo en la ruta: " & "/downloads" & vbNewLine & _
+        "Se Usaran los Datos de la Ultima Sesion Termida"
+Const NonRecentFileMsg As String = "No Se Encontro Ningun Archivo de Hoy Dia " & vbNewLine & _
+        "Se Usaran los Datos de la Ultima Sesion" & vbNewLine & _
+        "Nota: Descarga de la Web y reinicia este libro para usar datos Actuales"
 
 Implements IDataTable
 '* TODO Created: 04-10-2023 13:51 Author: VBATools
@@ -46,7 +51,7 @@ Private Type TStaticTable
     ElementsCounter As Integer
     ElementsFormat  As FormatSettings
     SrcBookPath     As String
-    ElementsRefId   As Dictionary
+    MissingElementsIds As Dictionary
 End Type
 
 Private this        As TStaticTable
@@ -61,7 +66,7 @@ Private Sub class_initialize()
         '.SrcBookPath = FindLatestXLSXFile(Environ("USERPROFILE") & "\Downloads\")
         Set .ws = ThisWorkbook.ActiveSheet
         Set .ElementsFormat = New FormatSettings
-        Set .ElementsRefId = New Dictionary
+        Set .MissingElementsIds = New Dictionary
         With .ElementsFormat
             .BgColor = RGB(249, 244, 245)
             .FontColor = vbBlack
@@ -100,7 +105,7 @@ Public Sub init(ByVal row As Integer, _
 End Sub
 
 'TODO: IMPLEMENT LOGIC FOR LAST FILE UPDATED TO BE DATA SOURCE
-'TODO: DOWNLOADS/ LASTSESSION
+'TODO: DOWNLOADS/ LASTSESSION CHECK LATEST MODIFIED
 Public Sub GetData()
 
     On Error GoTo getDataError
@@ -119,17 +124,14 @@ Public Sub GetData()
 
         If err.Number <> 0 Then
             On Error GoTo 0
-            MsgBox "No Se Encontro un Ningun Archivo en la ruta: " & .SrcBookPath & vbNewLine & _
-                    "Se Usaran los Datos de la Ultima Sesion Termida"
+            MsgBox FileNotFoundMsg
             GoTo UseBackup
         End If
 
         On Error GoTo 0
         If Int(FileDateTime(.SrcBookPath)) <> Int(Now) Or _
                 Int(FileDateTime(.SrcBookPath)) < Int(FileDateTime(BackupBookPath)) Then
-            MsgBox "No Se Encontro Ningun Archivo de Hoy Dia: " & Int(Now) & vbNewLine & _
-                    "Se Usaran los Datos de la Ultima Sesion" & vbNewLine & _
-                    "Nota: Descarga de la Web y reinicia este libro para usar datos Actuales"
+            MsgBox NonRecentFileMsg
             SourceBook.Close False
             GoTo UseBackup
         End If
@@ -149,6 +151,7 @@ UseBackup:
     GoTo ProcessData
 
 ProcessData:
+
     Dim SourceSheet As Worksheet: Set SourceSheet = SourceBook.Worksheets(1)
 
     'SET_TABLE_REFERENCES
@@ -160,6 +163,7 @@ ProcessData:
     Dim TableRange  As range
     Dim regex       As New RegExp
 
+
     With SourceTableRef
         ItemsLastRow = getLastRow(.CodeCol, SourceSheet)
         SetRangeRefences CodesRange, SourceSheet, .FirstRow, .CodeCol, ItemsLastRow
@@ -168,9 +172,13 @@ ProcessData:
         SetRangeRefences TableRange, SourceSheet, .FirstRow, .CodeCol, ItemsLastRow, .PriceCol
     End With
 
-
     'CLEAR_REGEX_NOTMATCHING
     Dim codearr     As Variant
+    
+    With TableRange
+        .RemoveDuplicates Columns:=Array(1), Header:=xlNo
+    End With
+
     codearr = Application.Transpose(CodesRange)
 
     CleanCodes codearr, "^[A-Z,a-z]{1,2}\d{3,4}\b"
@@ -206,7 +214,7 @@ ProcessData:
 
     StoreCodeIds codearr
 
-    SourceBook.Close True
+    SourceBook.Close False
     EndTime = Timer
     Debug.Print "GetData - Performance:", EndTime - InitTime & " sec"
 
@@ -221,13 +229,13 @@ getDataError:
 
 End Sub
 
-Private Function CombineArr(ByVal arr1 As Variant, ByVal arr2 As Variant, ByVal arr3 As Variant)
+Private Function CombineArr(ByVal arr1 As Variant, ByVal Arr2 As Variant, ByVal arr3 As Variant)
     Dim i           As Integer
     Dim arr         As Variant
     ReDim arr(1 To UBound(arr1), 1 To 3)
     For i = 1 To UBound(arr1)
         arr(i, 1) = arr1(i)
-        arr(i, 2) = arr2(i)
+        arr(i, 2) = Arr2(i)
         arr(i, 3) = arr3(i)
     Next i
     CombineArr = arr
@@ -257,42 +265,47 @@ Private Sub CleanCodes(ByRef arr As Variant, ByVal regexPattern As String)
         arr(i) = UCase(Code)
 nextId:
     Next i
+
 End Sub
-
 Private Sub StoreCodeIds(ByRef codearr As Variant)
-
-    'Save SourceBook Elements to ElementsComp Collection - Dictionary
-
-    Dim IdValuesMap As New Dictionary
+    Dim Ids()       As Variant
+    Dim ConsecutiveCounter As Long
+    Dim startIndex  As Long
     Dim i           As Long
 
-    Dim IdValues    As Variant: IdValues = Array("-1")
-    Dim CurrentKey, PrevKey As String
-    Dim CodeId, TempIdValCount As Long
+    ' Convert the codearr to an array of numbers
+    Ids = ConvertToNumbers(codearr)
+    startIndex = LBound(Ids)
 
-    PrevKey = ExtractLetter(codearr(1))
-    For i = LBound(codearr) To UBound(codearr)
-        CodeId = ExtractNumber(codearr(i))
-        CurrentKey = ExtractLetter(codearr(i))
-        If CurrentKey = PrevKey Then
-            'Push To IdValues
-            TempIdValCount = TempIdValCount + 1
-            ReDim Preserve IdValues(0 To TempIdValCount)
-            IdValues(TempIdValCount - 1) = CodeId
-            PrevKey = CurrentKey
-        Else            'Unmatching CodeKeys - Store PrevKey,IdValues[] - Reset IdValues - Init CodeId
-            'ElementsComp.CodeIds.Add PrevKey, IdValues
-            IdValuesMap.Add PrevKey, IdValues
-            ReDim IdValues(0 To 0)            'Erase IdValues
-            IdValues(0) = CodeId
-            PrevKey = CurrentKey
-            TempIdValCount = 0
-        End If
+    Do While startIndex <= UBound(Ids)
+        Dim key     As String
+        Dim Temp()  As Long
+        ConsecutiveCounter = 0
+        key = ExtractLetter(codearr(startIndex))
 
-    Next i
-    IdValuesMap.Add CurrentKey, IdValues
-    Set this.ElementsRefId = IdValuesMap
+        ' COUNT_ALL_KEYCODE_RELATED_IDS
+        i = startIndex
+        While i < UBound(Ids) And Ids(i) < Ids(i + 1)
+            ConsecutiveCounter = ConsecutiveCounter + 1
+            i = i + 1
+            If i = UBound(Ids) Then
+                GoTo FinalIdSegment
+            End If
 
+        Wend
+FinalIdSegment:
+        'STORE_KEY_IDS_TEMP_ARRAY
+        ReDim Temp(0 To ConsecutiveCounter)
+        For i = 0 To ConsecutiveCounter
+            Temp(i) = Ids(startIndex + i)
+        Next i
+
+        ' Add the Temp array to the dictionary
+        this.MissingElementsIds.Add key, MissingNumbers(Temp)
+
+        ' Move startIndex to the next non-consecutive number
+        startIndex = startIndex + ConsecutiveCounter + 1
+    Loop
 End Sub
 
 Public Sub SetRangeRefences(ByRef range As range, ByRef ws As Worksheet, _
@@ -474,12 +487,12 @@ End Property
 
 
 
-Public Property Get ElementsRefId() As Dictionary
-    Set ElementsRefId = this.ElementsRefId
+Public Property Get MissingElementsIds() As Dictionary
+    Set MissingElementsIds = this.MissingElementsIds
 End Property
 
-Public Property Set ElementsRefId(ByVal RHS As Dictionary)
-    Set this.ElementsRefId = RHS
+Public Property Set MissingElementsIds(ByVal RHS As Dictionary)
+    Set this.MissingElementsIds = RHS
 End Property
 
 
