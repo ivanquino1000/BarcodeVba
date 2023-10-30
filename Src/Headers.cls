@@ -12,13 +12,13 @@ Option Explicit
 Public Event HeadersUpdated(ByVal Headers As Variant)
 
 Private Type THeaders
-    values As Variant
-    Counter As Integer
-    range As range
-    format As FormatSettings
+    values          As Variant
+    Counter         As Integer
+    range           As range
+    format          As FormatSettings
 End Type
 
-Private this As THeaders
+Private this        As THeaders
 
 Private Sub class_initialize()
     With this
@@ -36,20 +36,20 @@ End Sub
 
 Public Sub Update(ByVal ws As Worksheet)
     On Error GoTo err
-    Dim Header As Variant
-    Dim i As Long
+    Dim Header      As Variant
+    Dim i           As Long
     For Each Header In this.values
-    
+
         ws.Cells( _
-        this.range.row, this.range.column + i _
-                       ).value = Header
+                this.range.row, this.range.column + i _
+                ).value = Header
 
         i = i + 1
     Next Header
     Call ApplyFormat(this.range, this.format)
-    
+
     Exit Sub
-    
+
 err:
     Debug.Print "UpdateHeaders.Err "; err.Description
 End Sub

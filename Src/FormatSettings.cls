@@ -20,7 +20,7 @@ Private Type TFormatSettings
     FontName As String
     FontSize As Long
     HAlign As XlHAlign
-    Shirnk As Boolean
+    Shrink As Boolean
     VAlign As XlVAlign
     NumberFormat As String
 End Type
@@ -38,7 +38,7 @@ Private Sub class_initialize()
         .FontName = "Courier New"
         .FontSize = 16
         .HAlign = xlCenter
-        .Shirnk = False
+        .Shrink = False
         .VAlign = xlCenter
         .NumberFormat = "General"
     End With
@@ -46,7 +46,7 @@ End Sub
 
 
 'Private Sub Build(ByVal BgColor As Long, ByVal FontSize As Long, ByVal FontColor As Long, _
-'                ByVal FontName As String, ByVal Bold As Boolean, ByVal Shirnk As Boolean, _
+'                ByVal FontName As String, ByVal Bold As Boolean, ByVal Shrink As Boolean, _
 '                ByVal VAlign As XlVAlign, ByVal HAlign As XlHAlign, ByVal BorderStyle As XlLineStyle, _
 '                ByVal BorderWeight As XlBorderWeight)
 '    With this
@@ -58,7 +58,7 @@ End Sub
 '        .FontName = FontName
 '        .FontSize = FontSize
 '        .HAlign = HAlign
-'        .Shirnk = Shirnk
+'        .Shrink = Shrink
 '        .VAlign = VAlign
 '    End With
 'End Sub
@@ -129,12 +129,12 @@ Public Property Let HAlign(ByVal value As XlHAlign)
     this.HAlign = value
 End Property
 
-Public Property Get Shirnk() As Boolean
-    Shirnk = this.Shirnk
+Public Property Get Shrink() As Boolean
+    Shrink = this.Shrink
 End Property
 
-Public Property Let Shirnk(ByVal value As Boolean)
-    this.Shirnk = value
+Public Property Let Shrink(ByVal value As Boolean)
+    this.Shrink = value
 End Property
 
 Public Property Get VAlign() As XlVAlign

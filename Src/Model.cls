@@ -221,7 +221,7 @@ Private Function CreateFormat(ByVal datatype As datatype, ByVal Theme As Themes)
                 .Bold = True
                 .HAlign = xlRight
                 .VAlign = xlCenter
-                .Shirnk = True
+                .Shrink = True
                 .NumberFormat = "_($* #,##0.00_);_($* (#,##0.00);_($* ""-""??_);_(@_)"
             Case ShortNumber
                 .FontName = "Chinese Rocks Rg"
@@ -229,7 +229,7 @@ Private Function CreateFormat(ByVal datatype As datatype, ByVal Theme As Themes)
                 .Bold = True
                 .HAlign = xlRight
                 .VAlign = xlCenter
-                .Shirnk = False
+                .Shrink = True
                 .NumberFormat = "_($* #,##0.00_);_($* (#,##0.00);_($* ""-""??_);_(@_)"
             Case TitleText
                 .FontName = "BABAPRO FONT"
@@ -237,35 +237,35 @@ Private Function CreateFormat(ByVal datatype As datatype, ByVal Theme As Themes)
                 .Bold = False
                 .HAlign = xlCenter
                 .VAlign = xlCenter
-                .Shirnk = False
+                .Shrink = True
             Case NormalText
                 .FontName = "Bahnschrift Light SemiCondensed"
                 .FontSize = 12
                 .Bold = True
                 .HAlign = xlLeft
                 .VAlign = xlCenter
-                .Shirnk = False
+                .Shrink = True
             Case LabelText
                 .FontName = "Japanese Robot"
                 .FontSize = 12
                 .Bold = True
                 .HAlign = xlCenter
                 .VAlign = xlCenter
-                .Shirnk = False
+                .Shrink = True
             Case Date
                 .FontName = "Bahnschrift SemiLight"
                 .FontSize = 12
                 .Bold = False
                 .HAlign = xlCenter
                 .VAlign = xlCenter
-                .Shirnk = False
+                .Shrink = True
             Case Else    'Barcode
                 .FontName = "Code 39-hoch-Logitogo"
                 .FontSize = 60
                 .Bold = False
                 .HAlign = xlCenter
                 .VAlign = xlCenter
-                .Shirnk = False
+                .Shrink = True
         End Select
     End With
 

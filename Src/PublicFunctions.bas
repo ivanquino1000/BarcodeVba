@@ -11,6 +11,7 @@ Public Sub ApplyFormat(ByVal rng As range, ByVal format As FormatSettings)
         .Borders.Weight = format.BorderWeight
         .Borders.LineStyle = format.BorderStyle
         .NumberFormat = format.NumberFormat
+        .ShrinkToFit = format.Shrink
     End With
 End Sub
 
@@ -86,9 +87,9 @@ Public Function MissingNumbers(ByVal arr As Variant) As Variant
             Mia(UBound(Mia)) = i
         End If
     Next i
-    For i = 0 To UBound(Mia)
-        Debug.Print Mia(i)
-    Next i
+'    For i = 0 To UBound(Mia)
+'        Debug.Print Mia(i)
+'    Next i
     MissingNumbers = Mia
 End Function
 
@@ -104,10 +105,11 @@ Sub LabelTest()
     With ThisWorkbook.Sheets("LabelSheet")
         .Cells.ClearContents
         .Cells.ClearFormats
+         .Parent.Windows(1).Zoom = 50
     End With
     With Lab.Product
         .Description = ""
-        .Cost = 0
+        .Cost = 1
         .Supplier = ""
     End With
     Lab.ToRange
