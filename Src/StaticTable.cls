@@ -8,17 +8,15 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
+
 Const FileNotFoundMsg As String = "No Se Encontro un Ningun Archivo en la ruta: " & "/downloads" & vbNewLine & _
         "Se Usaran los Datos de la Ultima Sesion Termida"
+
 Const NonRecentFileMsg As String = "No Se Encontro Ningun Archivo de Hoy Dia " & vbNewLine & _
         "Se Usaran los Datos de la Ultima Sesion" & vbNewLine & _
         "Nota: Descarga de la Web y reinicia este libro para usar datos Actuales"
 
 Implements IDataTable
-'* TODO Created: 04-10-2023 13:51 Author: VBATools
-'* Implement Update Procedure _
- * Set StaticElemnts Logic - static element Countes - prevElemRange - Elem Range _
- * Set UpdateLogic - ws.Select - HeadersUpdate - Clear prev elem range + format elem range
 
 Public Event HeadersPlaced(ByVal Headers As Variant)
 Public Event elementAdded(ByVal Element As item)
@@ -28,8 +26,6 @@ Public Event DataGotten(ByVal elem_num As Long)
 
 Public WithEvents HeadersComp As Headers
 Attribute HeadersComp.VB_VarHelpID = -1
-
-
 
 Private Type SourceTab
     FirstRow        As Long
@@ -45,7 +41,7 @@ Private Type TStaticTable
     column          As Integer
     range           As range
     ws              As Worksheet
-    Headers         As Headers
+    'Headers         As Headers
     ElementsRange   As range
     PreviousElemRange As range
     ElementsCounter As Integer
@@ -267,6 +263,7 @@ nextId:
     Next i
 
 End Sub
+
 Private Sub StoreCodeIds(ByRef codearr As Variant)
     Dim Ids()       As Variant
     Dim ConsecutiveCounter As Long
@@ -408,13 +405,13 @@ Public Property Let ElementsCounter(ByVal RHS As Integer)
 End Property
 
 
-Public Property Get Headers() As Headers
-    Set Headers = this.Headers
-End Property
-
-Public Property Set Headers(ByVal RHS As Headers)
-    Set this.Headers = RHS
-End Property
+'Public Property Get Headers() As Headers
+'    Set Headers = this.Headers
+'End Property
+'
+'Public Property Set Headers(ByVal RHS As Headers)
+'    Set this.Headers = RHS
+'End Property
 
 Public Property Get ElementsRange() As range
     Set ElementsRange = this.ElementsRange
