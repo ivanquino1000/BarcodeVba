@@ -9,8 +9,6 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-
-
 Private Type TCompany
     Address As String
     Name As String

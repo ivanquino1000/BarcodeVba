@@ -99,7 +99,7 @@ Sub LabelTest()
 'SHRINK TO FIT ALL CELLS
 '
 
-    Dim Product     As New item
+    Dim product     As New item
     Dim Company     As New Company
     Dim Lab         As New Label
     With ThisWorkbook.Sheets("LabelSheet")
@@ -107,7 +107,7 @@ Sub LabelTest()
         .Cells.ClearFormats
          .Parent.Windows(1).Zoom = 50
     End With
-    With Lab.Product
+    With Lab.product
         .Description = ""
         .Cost = 1
         .Supplier = ""
@@ -115,6 +115,14 @@ Sub LabelTest()
     Lab.ToRange
 
 
+End Sub
+
+Sub PushToVariant(ByRef arr As Variant, ByVal value As Variant)
+    ' Redimension the array to add one more element
+    ReDim Preserve arr(LBound(arr) To UBound(arr) + 1)
+    
+    ' Assign the value to the last element
+    arr(UBound(arr)) = value
 End Sub
 
 Sub MergeRange()

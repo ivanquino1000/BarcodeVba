@@ -18,7 +18,19 @@ Const IntroductoryMessage As String = "Welcome to Codebar Printer You will first
         vbNewLine & "      @TEXTO *?*: Datos Opcionales de Relleno" & vbNewLine & _
         vbNewLine & "- Al finalizar enviar y subir los productos creados en esta sesion" & _
         vbNewLine & "-IvanQuino1000"
-Dim InitTime, EndTime As Double
+
+Const REQUIRED_DATA_DELETION_ERROR As String = "VALORES OBLIGATORIOS " & vbNewLine & _
+        "   - No pueden Sen Elimindos Solo Actualizados " & vbNewLine
+
+Const MISSING_VALUES As String = "VALORES INCOMPLETOS" & vbNewLine & _
+        "   -Alguno de los Elemntos no se Encuentra Completo" & vbNewLine
+
+Const VALIDATION_MESSAGE As String = "CONTINUAR?..." & vbNewLine & _
+        "Seguro que Desea Ejecutar Esta Accion?" & vbNewLine _
+
+
+
+        Dim InitTime, EndTime As Double
 Public PrinterName  As String
 
 Private WithEvents listTable As DynamicTable
@@ -34,60 +46,61 @@ Attribute databaseTable.VB_VarHelpID = -1
 'CUSTOM KEY TO CHANGE SUPPLIER
 'TODO: On items  !exist documents  => Move From APPResources
 Private Sub Workbook_Open()
-    Application.EnableAutoComplete = False
-    Application.ScreenUpdating = False
-    Application.EnableEvents = False
+    With Application
+        .EnableAutoComplete = False
+        .ScreenUpdating = False
+        .EnableEvents = False
 
-    Dim sheet       As Worksheet
+        Dim sheet   As Worksheet
 
-    For Each sheet In Me.Sheets
-        With sheet.Cells
-            .ClearContents
-            .ClearFormats
-            .Interior.Color = RGB(17, 21, 28)
+        For Each sheet In Me.Sheets
+            With sheet.Cells
+                .ClearContents
+                .ClearFormats
+                .Interior.Color = RGB(17, 21, 28)
+            End With
+
+        Next sheet
+        With ThisWorkbook.Worksheets
+            .Select
+            ActiveWindow.Zoom = 60
         End With
 
-    Next sheet
-    With ThisWorkbook.Worksheets
-        .Select
-        ActiveWindow.Zoom = 60
+        'Set & Create Tables
+        InitTime = Timer
+
+        Set listTable = New DynamicTable
+        Set databaseTable = New StaticTable
+        Set searchTable = New StaticTable
+        Set resultsTable = New StaticTable
+
+        listTable.init 5, 2, ThisWorkbook.Sheets("MainSheet"), _
+                Array( _
+                "Cant", "Codigo", "Nombre", _
+                "Adicional", "Proveedor", "Cant*Caja", "Precio*Caja", _
+                "Costo?", "xMayor?", "Precio")
+        databaseTable.init 1, 1, ThisWorkbook.Sheets("DataSheet"), _
+                Array( _
+                "Codigo", "Nombre", "Precio" _
+                )
+        searchTable.init 2, 13, ThisWorkbook.Sheets("MainSheet"), _
+                Array( _
+                "Codigo", "Nombre", "Precio" _
+                )
+        resultsTable.init 5, 13, ThisWorkbook.Sheets("MainSheet"), _
+                Array( _
+                "Codigo", "Nombre", "Precio" _
+                )
+        EndTime = Timer
+        Debug.Print "UITableBuild- Performance:", EndTime - InitTime & " sec"
+
+        databaseTable.GetData
+
+        ThisWorkbook.Sheets("MainSheet").Select
+
+        .ScreenUpdating = True
+        .EnableEvents = True
     End With
-
-    'Set & Create Tables
-    InitTime = Timer
-
-    Set listTable = New DynamicTable
-    Set databaseTable = New StaticTable
-    Set searchTable = New StaticTable
-    Set resultsTable = New StaticTable
-
-    listTable.init 5, 2, ThisWorkbook.Sheets("MainSheet"), _
-            Array( _
-            "Cant", "Codigo", "Nombre", _
-            "Adicional", "Proveedor", "Cant*Caja", "Precio*Caja", _
-            "Costo?", "xMayor?", "Precio")
-    databaseTable.init 1, 1, ThisWorkbook.Sheets("DataSheet"), _
-            Array( _
-            "Codigo", "Nombre", "Precio" _
-            )
-    searchTable.init 2, 13, ThisWorkbook.Sheets("MainSheet"), _
-            Array( _
-            "Codigo", "Nombre", "Precio" _
-            )
-    resultsTable.init 5, 13, ThisWorkbook.Sheets("MainSheet"), _
-            Array( _
-            "Codigo", "Nombre", "Precio" _
-            )
-    EndTime = Timer
-    Debug.Print "UITableBuild- Performance:", EndTime - InitTime & " sec"
-
-    databaseTable.GetData
-
-    ThisWorkbook.Sheets("MainSheet").Select
-
-    Application.ScreenUpdating = True
-    Application.EnableEvents = True
-
 End Sub
 
 
@@ -98,68 +111,86 @@ End Sub
 Private Sub Workbook_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As range, Cancel As Boolean)
 
     If Sh.Name = "MainSheet" Then
+
         '@AddElement / ResultsTable
 
         If Not Intersect(Target, resultsTable.ElementsRange) Is Nothing Then
 
             Cancel = True
 
-            Application.EnableEvents = False
-            Dim rowId As Integer
+            With Application
+                .EnableEvents = False
+                .ScreenUpdating = False
 
-            Dim CodeRange As range
-            Dim NameRange As range
-            Dim PriceRange As range
 
-            Dim Product As New item
+                Dim rowId As Integer
 
-            rowId = Target.row - resultsTable.row
+                Dim CodeRange As range
+                Dim NameRange As range
+                Dim PriceRange As range
 
-            With resultsTable.ElementsRange
-                Set CodeRange = .Columns(1)
-                Set NameRange = .Columns(2)
-                Set PriceRange = .Columns(3)
+                Dim product As New item
+
+                rowId = Target.row - resultsTable.row
+
+                With resultsTable.ElementsRange
+                    Set CodeRange = .Columns(1)
+                    Set NameRange = .Columns(2)
+                    Set PriceRange = .Columns(3)
+                End With
+                ' # Check Empty Values
+                If CodeRange.Cells(rowId).Value2 = "" Or _
+                        NameRange.Cells(rowId).Value2 = "" Or _
+                        PriceRange.Cells(rowId).Value2 = "" Then
+                    MsgBox MISSING_VALUES & " $Tabla de Resultados: (CODIGO,NOMBRE O PRECIO )NO ENCONTRADOS "
+                    GoTo InvalidValues
+                End If
+                'Fill Product Data
+                With product
+                    .Code = CodeRange.Cells(rowId).Value2
+                    .Name = NameRange.Cells(rowId).Value2
+                    .SellingPrice = PriceRange.Cells(rowId).Value2
+                End With
+
+                If Not Intersect(Target, CodeRange) Is Nothing Then
+                    product.Code = "AC0001"
+                End If
+
+                listTable.ElementsComp.values.Add product
+                listTable.Update
+InvalidValues:
+                .EnableEvents = True
+                .ScreenUpdating = True
             End With
-
-            'Fill Product Data
-            With Product
-                .Code = CodeRange.Cells(rowId).Value2
-                .Name = NameRange.Cells(rowId).Value2
-                .SellingPrice = PriceRange.Cells(rowId).Value2
-            End With
-
-            If Not Intersect(Target, CodeRange) Is Nothing Then
-                Product.Code = "AC0001"
-            End If
-
-            listTable.ElementsComp.values.Add Product
-            listTable.Update
-
-            Application.EnableEvents = True
         End If
 
         '@ListTable / Delete
         If Not Intersect(Target, listTable.ElementsComp.range) Is Nothing Then
+            Cancel = True
             With Application
                 .EnableEvents = False
                 .ScreenUpdating = False
-                If listTable.ElementsComp.values.Count < 1 Then
-                    GoTo EmptyItems
+                If listTable.ElementsComp.values.Count = 0 Then
+                    GoTo InvalidCase
+                End If
+                Dim UserValidation As Long
+                UserValidation = MsgBox(VALIDATION_MESSAGE & "Eliminar Producto de la Lista de Impresion", vbYesNo)
+                If UserValidation = vbNo Then
+                    GoTo InvalidCase
                 End If
                 Dim ItemId As Integer
                 With listTable
                     ItemId = Target.row - .row
                     With .ElementsComp
                         .values.Remove ItemId
-
                     End With
                     .Update
                 End With
-
+InvalidCase:
                 .EnableEvents = True
                 .ScreenUpdating = True
             End With
-EmptyItems:
+
         End If
 
     End If
@@ -172,7 +203,7 @@ End Sub
 'Labels as placeholders
 
 Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As range)
-
+    Dim cell        As range
 
     '@UI - MainSheet
     If Sh.Name = "MainSheet" Then
@@ -184,84 +215,98 @@ Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As range)
                 .ScreenUpdating = False
 
                 With listTable
+
                     '@No Elemnts To Update
-                    If listTable.ElementsComp.values.Count < 1 Then
+                    If listTable.ElementsComp.values.Count = 0 Then
                         GoTo EmptyElements
                     End If
 
-                    Dim item As range
-                    For Each item In .ElementsComp.range.Rows
+                    Dim product As range
 
-                        If IsEmpty(item) Then
+                    Dim RemovalOrderIndexes As Variant: RemovalOrderIndexes = Array()
+                    
+                    For Each product In Target.Rows
+                        Dim CompleteProduct As range
+                        Set CompleteProduct = Sh.Cells(product.row, .column).Resize(, .HeadersComp.range.Columns.Count)
+                        Dim EMPTY_STATE As Boolean: EMPTY_STATE = True
+                        
+                        Dim i, j As Long
+
+                        For i = LBound(CompleteProduct.Value2, 1) To UBound(CompleteProduct.Value2, 1)
+                            For j = LBound(CompleteProduct.Value2, 2) To UBound(CompleteProduct.Value2, 2)
+                                If Not IsEmpty(CompleteProduct.Value2(i, j)) Then
+                                    EMPTY_STATE = False
+                                    GoTo HasElements
+                                End If
+                            Next j
+                        Next i
+
+                        If EMPTY_STATE = True Then
+
+                            Debug.Print "Current ID: " & product.row - .row & vbNewLine & _
+                                    "ELEMENTS COLLECTION: " & .ElementsComp.values.Count & vbNewLine
+
+                            PushToVariant RemovalOrderIndexes, product.row - .row
 
                             GoTo NextItem
                         End If
+HasElements:
+                        For Each cell In CompleteProduct.Cells
 
-                        Dim cell As range
-                        For Each cell In item
-'                            Dim prop As String
-'                            prop = .ElementsComp.HeaderMap(.HeadersComp.range(, Target.column - .column + 1).value)
-'
-'                            Dim ElementId As Long: ElementId = Target.row - .row
-'                            Dim Element As Object
-'                            Set Element = .ElementsComp.values.item(ElementId)
-'
-'                            Select Case prop
-'                                Case "Qty", "BoxPrice", "BoxQty", "Cost", "SellingPrice", "WholeSalePrice"
-'                                    If Not IsNumeric(prop) Then
-'                                        'Target.Value2 = ""
-'                                        'Exit Sub
-'                                    End If
-'                                    CallByName Element, prop, VbLet, Target.Value2
-'                                    .ElementsComp.Update Sh, .HeadersComp.values
-'                                Case Else
-'                                    If Not IsNumeric(prop) Then
-'                                        'Target.Value2 = ""
-'                                        'Exit Sub
-'                                    End If
-'                                    CallByName Element, prop, VbLet, StrConv(Target.Value2, vbProperCase)
-'                                    .ElementsComp.Update Sh, .HeadersComp.values
-'                            End Select
+                            Dim prop As String
+                            prop = .ElementsComp.HeaderMap(.HeadersComp.range(, cell.column - .column + 1).value)
+
+                            Dim ElementId As Long: ElementId = cell.row - .row
+                            Dim Element As Object
+                            Set Element = .ElementsComp.values.item(ElementId)
+
+                            Select Case prop
+
+
+                                Case "Qty", "BoxPrice", "BoxQty", "Cost", "SellingPrice", "WholeSalePrice"
+
+                                    '# Mandatory Data /BREAK AFTER
+                                    If prop = "SellingPrice" And cell.Value2 = "" Then
+                                        MsgBox REQUIRED_DATA_DELETION_ERROR & "Precio de Venta - Retornara al valor Anterior"
+                                        GoTo InvalidValues
+                                    End If
+
+                                    If Not IsNumeric(cell.Value2) Then
+                                        GoTo InvalidValues
+                                    End If
+
+                                    CallByName Element, prop, VbLet, cell.Value2
+                                Case Else
+                                    '# Mandatory Data /BREAK AFTER
+                                    If prop = "Code" Or prop = "Name" Then
+                                        If cell.Value2 = "" Then
+                                            MsgBox REQUIRED_DATA_DELETION_ERROR & prop & " / Retornara al valor Anterior"
+                                            GoTo InvalidValues
+                                        End If
+                                    End If
+                                    CallByName Element, prop, VbLet, StrConv(cell.Value2, vbProperCase)
+                            End Select
+InvalidValues:
                         Next cell
+
 NextItem:
-                    Next item
+                    Next product
+
+                    If Not IsEmpty(RemovalOrderIndexes) Then
+                        For i = LBound(RemovalOrderIndexes) To UBound(RemovalOrderIndexes)
+                            Debug.Print "Remove Orders: " & i; RemovalOrderIndexes(i)
+                            .ElementsComp.values.Remove RemovalOrderIndexes(i)
+                        Next i
+                    End If
+
+                    .ElementsComp.Update Sh, .HeadersComp.values
+                    .Update
+EmptyElements:
                 End With
-                '########
-                '                With listTable
-                '
-                '                    Dim prop As String
-                '                    prop = .ElementsComp.HeaderMap(.HeadersComp.range(, Target.column - .column + 1).value)
-                '                    If Not .ElementsComp.HeaderMap.Exists(prop) Then
-                '                        'Target.Value2 = ""
-                '                        'Debug.Print "missMe"
-                '                        'GoTo InvalidValues
-                '                    End If
-                '
-                '                    Dim ElementId As Long: ElementId = Target.row - .row
-                '                    Dim Element As Object
-                '                    Set Element = .ElementsComp.values.item(ElementId)
-                '
-                '                    Select Case prop
-                '                        Case "Qty", "BoxPrice", "BoxQty", "Cost", "SellingPrice", "WholeSalePrice"
-                '                            If Not IsNumeric(prop) Then
-                '                                'Target.Value2 = ""
-                '                                'Exit Sub
-                '                            End If
-                '                            CallByName Element, prop, VbLet, Target.Value2
-                '                            .ElementsComp.Update Sh, .HeadersComp.values
-                '                        Case Else
-                '                            If Not IsNumeric(prop) Then
-                '                                'Target.Value2 = ""
-                '                                'Exit Sub
-                '                            End If
-                '                            CallByName Element, prop, VbLet, StrConv(Target.Value2, vbProperCase)
-                '                            .ElementsComp.Update Sh, .HeadersComp.values
-                '                    End Select
-                '                End With
                 .EnableEvents = True
                 .ScreenUpdating = True
             End With
-InvalidValues:
+
         End If
 
         '@UI [SearchBar]
@@ -279,7 +324,6 @@ InvalidValues:
 
                 Set item = Target
 UpdateProperties:
-                Dim cell As range
 
                 For Each cell In item
                     If IsEmpty(item) Then
@@ -364,6 +408,7 @@ FillResults:
 
     End If
 End Sub
+
 
 
 

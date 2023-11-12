@@ -22,7 +22,7 @@ Private Type TLabel
     Model           As Model
     Instances       As Integer
     ws              As Worksheet
-    Product         As item
+    product         As item
     Bussiness       As Company
 End Type
 Private this        As TLabel
@@ -34,7 +34,7 @@ Public Sub class_initialize()
         Set .Model = New Model
         .Instances = 0
         Set .ws = ThisWorkbook.Sheets("LabelSheet")
-        Set .Product = New item
+        Set .product = New item
         Set .Bussiness = New Company
     End With
 End Sub
@@ -46,7 +46,7 @@ Public Sub build(ByVal item As item, ByVal Bussiness As Company)
         Set .Model = Models.Default
         .Instances = 0
         .ws = thiswowkbook.Sheets("LabelSheet")
-        Set .Product = item
+        Set .product = item
         Set .Bussiness = Bussiness
     End With
 End Sub
@@ -73,7 +73,7 @@ KeyChecker:
             If key = "" Then
                 GoTo ToNextCell
             End If
-            If .Model.KeyInModel(.Product, .Bussiness, key, keyVal) Then
+            If .Model.KeyInModel(.product, .Bussiness, key, keyVal) Then
                 If keyVal = "" Then
                     If .Model.FallBack.Exists(key) Then
                         key = .Model.FallBack(key)
@@ -175,12 +175,12 @@ Public Property Set ws(ByVal RHS As Worksheet)
     Set this.ws = RHS
 End Property
 
-Public Property Get Product() As item
-    Set Product = this.Product
+Public Property Get product() As item
+    Set product = this.product
 End Property
 
-Public Property Set Product(ByVal RHS As item)
-    Set this.Product = RHS
+Public Property Set product(ByVal RHS As item)
+    Set this.product = RHS
 End Property
 
 
