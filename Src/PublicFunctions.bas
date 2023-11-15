@@ -21,10 +21,10 @@ Public Function getLastRow(ByVal column As Variant, ByRef ws As Worksheet) As In
     End With
 End Function
 
-Public Function GetParentPath(ByVal path As String) As String
+Public Function GetParentPath(ByVal Path As String) As String
     Dim currentPath As String
 
-    currentPath = path
+    currentPath = Path
 
     ' Check if the current path ends with a backslash
     If Right(currentPath, 1) = "\" Then
@@ -303,7 +303,7 @@ Function FindLatestXLSXFile(ByVal pathDir As String) As String
     For Each file In fileSystem.GetFolder(folderPath).Files
         ' Check if the file is an XLSX file and compare its last modified date
         If LCase(Right(file.Name, 5)) = ".xlsx" And file.DateLastModified > latestDate Then
-            latestFile = file.path
+            latestFile = file.Path
             latestDate = file.DateLastModified
         End If
     Next file

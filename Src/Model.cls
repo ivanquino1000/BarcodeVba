@@ -13,7 +13,7 @@ Public Enum Themes
     light
     dark
 End Enum
-'POO
+
 Public Enum datatype
     longnumber
     ShortNumber
@@ -44,12 +44,12 @@ End Type
 
 Private this        As TModel
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
     With this
         .RowSize = 6
         .ColumnSize = 3
         .Theme = light
-        
+
         Set .FallBack = New Dictionary
         Set .ProductCoord = New Dictionary
         Set .ProductFormat = New Collection
@@ -64,16 +64,14 @@ Private Sub class_initialize()
 
 
         With .ProductCoord
-            .Add "BoxPrice", Array(5, 1)    'Unit
-            '.Add "BoxQty", Array(4, 1)
             .Add "Code", Array(1, 1)
+            .Add "Name", Array(1, 2)
             .Add "Cost", Array(2, 1)
             .Add "Description", Array(2, 2)
-            .Add "Name", Array(1, 2)
-            '.Add "Qty", Array(4, 2)
             .Add "SellingPrice", Array(4, 3)
-            .Add "Supplier", Array(6, 3)
+            .Add "BoxPrice", Array(5, 1)
             .Add "WholeSalePrice", Array(5, 2)
+            .Add "Supplier", Array(6, 3)
         End With
 
         With .ProductResize
@@ -87,9 +85,6 @@ Private Sub class_initialize()
             .Add "SellingPrice", Array("D", 1)
             .Add "Supplier", Array("R", 0)
             .Add "WholeSalePrice", Array("R", 0)
-
-
-            '.Add "Date", Array("R", 0)
 
         End With
         With .ProductFormat
@@ -107,26 +102,24 @@ Private Sub class_initialize()
 
         With .CompanyCoord
             .Add "Address", Array(2, 2)
-            .Add "Name", Array(2, 1)
-            '.Add "Ruc", Array(1, 1)
+            .Add "RazonSocial", Array(2, 1)
             .Add "Email", Array(4, 1)
             .Add "Phone", Array(5, 1)
             .Add "facebook", Array(6, 1)
-
         End With
         With .CompanyResize
 
             .Add "Address", Array("R", 1)
-            .Add "Name", Array("R", 0)
-            .Add "Ruc", Array("R", 0)
-            .Add "Email", Array("R", 0)
+            .Add "RazonSocial", Array("R", 0)
+            .Add "Ruc", Array("R", 1)
+            .Add "Email", Array("R", 1)
             .Add "Phone", Array("R", 0)
-            .Add "facebook", Array("R", 0)
+            .Add "facebook", Array("R", 1)
 
         End With
         With .CompanyFormat
             .Add CreateFormat(datatype.NormalText, Themes.light), "Address"
-            .Add CreateFormat(datatype.TitleText, Themes.dark), "Name"
+            .Add CreateFormat(datatype.TitleText, Themes.dark), "RazonSocial"
             .Add CreateFormat(datatype.NormalText, Themes.light), "Ruc"
             .Add CreateFormat(datatype.NormalText, Themes.light), "Email"
             .Add CreateFormat(datatype.NormalText, Themes.light), "Phone"
@@ -142,6 +135,7 @@ Private Sub class_initialize()
             .Add "Barcode", Array(3, 1)
 
         End With
+
         With .LabelResize
             .Add "BoxLabel", Array("R", 0)
             .Add "BoxTotalPrice", Array("R", 0)
@@ -149,6 +143,8 @@ Private Sub class_initialize()
             .Add "DozTotalPrice", Array("R", 0)
             .Add "Date", Array("R", 0)
             .Add "Barcode", Array("R", 2)
+            .Add "PaymentLabel", Array("R", 0)
+            .Add "PrintingQty", Array("R", 0)
         End With
         With .LabelFormat
 
@@ -157,8 +153,12 @@ Private Sub class_initialize()
             .Add CreateFormat(datatype.LabelText, Themes.dark), "DozLabel"
             .Add CreateFormat(datatype.ShortNumber, Themes.light), "DozTotalPrice"
             .Add CreateFormat(datatype.Barcode, Themes.dark), "Barcode"
-
             .Add CreateFormat(datatype.Date, Themes.dark), "Date"
+
+            .Add CreateFormat(datatype.LabelText, Themes.dark), "PaymentLabel"
+            .Add CreateFormat(datatype.NormalText, Themes.light), "PrintingQty"
+
+
         End With
         With .LabelValues
             .Add "BoxLabel", "Box()"
@@ -167,25 +167,16 @@ Private Sub class_initialize()
             .Add "DozTotalPrice", 99
             .Add "Date", Now
             .Add "Barcode", "EmptyBC"
+            .Add "PaymentLabel", "YAPE/PLIN"
+            .Add "PrintingQty", "Out: 9 Units"
         End With
 
         With FallBack
-            .Add "BoxPrice", "Phone"
-            '.Add "BoxQty", "Name"
-            .Add "Code", ""
+
             .Add "Cost", "Name"
             .Add "Description", "Address"
-            .Add "Name", ""
-            '.Add "Qty", "Name"
-            .Add "SellingPrice", ""
             .Add "Supplier", "Date"
-            '.Add "WholeSalePrice", "Name"
-            .Add "BoxLabel", "Email"
-            .Add "BoxTotalPrice", "facebook"
-            .Add "DozLabel", ""
-            .Add "DozTotalPrice", ""
-            '.Add "Date", Array("R", 1)
-            '.Add "Barcode", Array("R", 1)
+
         End With
 
     End With
@@ -273,23 +264,96 @@ Private Function CreateFormat(ByVal datatype As datatype, ByVal Theme As Themes)
     Set CreateFormat = format
 End Function
 
-Public Function CreateGrid() As Variant
+Public Function CreateGrid(Optional ByVal BoxPrice As Variant, Optional ByVal DozPrice As Variant, Optional ByVal BoxQty As Variant, Optional ByVal Barcode As String) As Variant
     Dim Grid        As Variant
     Dim key         As Variant
+    Dim DefaultBoxQty As Variant: DefaultBoxQty = 24
+    
     With this
         ReDim Grid(1 To .RowSize, 1 To .ColumnSize)
+        
+        If Not Barcode = "" Then
+            With .LabelValues("Barcode") = Barcode
+        End If
+        
         With .ProductCoord
             For Each key In .Keys
                 'Debug.Print key
                 Grid(.item(key)(0), .item(key)(1)) = key
             Next key
         End With
+
         With .LabelCoord
             For Each key In .Keys
                 Grid(.item(key)(0), .item(key)(1)) = key
             Next key
         End With
+
+
+
+
+        If IsEmpty(BoxPrice) And IsEmpty(DozPrice) Then
+            'Box
+            With .ProductCoord
+                Grid(.item("BoxPrice")(0), .item("BoxPrice")(1)) = "facebook"
+            End With
+            With .LabelCoord
+                Grid(.item("BoxLabel")(0), .item("BoxLabel")(1)) = "Email"
+                Grid(.item("BoxTotalPrice")(0), .item("BoxTotalPrice")(1)) = "Ruc"
+            End With
+            'Doz
+            With .ProductCoord
+                Grid(.item("WholeSalePrice")(0), .item("WholeSalePrice")(1)) = ""
+            End With
+            With .LabelCoord
+                Grid(.item("DozLabel")(0), .item("DozLabel")(1)) = ""
+                Grid(.item("DozTotalPrice")(0), .item("DozTotalPrice")(1)) = ""
+            End With
+
+            GoTo ReturnGrid
+        End If
+
+        If IsEmpty(BoxPrice) Then
+            'DeleteRelated - Replace Labels
+            With .ProductCoord
+                Grid(.item("BoxPrice")(0), .item("BoxPrice")(1)) = "Phone"
+            End With
+            With .LabelCoord
+                Grid(.item("BoxLabel")(0), .item("BoxLabel")(1)) = "PaymentLabel"
+                Grid(.item("BoxTotalPrice")(0), .item("BoxTotalPrice")(1)) = "PrintingQty"
+            End With
+
+        End If
+
+        '@Update BOX_RELATED_LABELS
+        
+        If Not IsEmpty(BoxQty) Then
+            DefaultBoxQty = BoxQty
+        End If
+        
+        .LabelValues("BoxTotalPrice") = BoxPrice * DefaultBoxQty
+        .LabelValues("BoxPrice") = BoxPrice
+        .LabelValues("BoxLabel") = "BOX(" & DefaultBoxQty & ")"
+        
+        If IsEmpty(DozPrice) Then
+            'DeleteRelated - Replace Labels
+            With .ProductCoord
+                Grid(.item("WholeSalePrice")(0), .item("WholeSalePrice")(1)) = "Phone"
+            End With
+            With .LabelCoord
+                Grid(.item("DozLabel")(0), .item("DozLabel")(1)) = "PaymentLabel"
+                Grid(.item("DozTotalPrice")(0), .item("DozTotalPrice")(1)) = "PrintingQty"
+            End With
+
+
+        End If
+        '@Update DOZ_RELATED_LABELS
+        .LabelValues("DozTotalPrice") = DozPrice * 12
+        
+ReturnGrid:
     End With
+
+
     CreateGrid = Grid
 End Function
 
@@ -347,14 +411,14 @@ Public Function SetFormat(ByVal key As String, ByRef format As Object) As Boolea
         SetFormat = True
         Exit Function
     End If
-    
+
     On Error Resume Next
     Set format = this.CompanyFormat(key)
     If err.Number = 0 Then
         SetFormat = True
         Exit Function
     End If
-    
+
     On Error Resume Next
     Set format = this.LabelFormat(key)
     If err.Number = 0 Then

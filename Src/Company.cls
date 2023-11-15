@@ -11,7 +11,7 @@ Option Explicit
 
 Private Type TCompany
     Address As String
-    Name As String
+    RazonSocial As String
     Ruc As String
     Email As String
     Phone As String
@@ -22,10 +22,10 @@ End Type
 Private this As TCompany
 
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
     With this
         .Address = "Octavio Munoz Najar 202"
-        .Name = "SORAZA"
+        .RazonSocial = "SORAZA"
         .Ruc = "20608875426"
         .Email = "sorazaimport30@gmail.com"
         .Phone = "958190331"
@@ -33,10 +33,10 @@ Private Sub class_initialize()
     End With
 End Sub
 
-Public Sub init(ByVal IName As String, ByVal IAddress As String, ByVal IRuc As String)
+Public Sub init(ByVal IRazonSocial As String, ByVal IAddress As String, ByVal IRuc As String)
     With this
         .Address = IAddress
-        .Name = IName
+        .RazonSocial = IRazonSocial
         .Ruc = IRuc
     End With
 End Sub
@@ -57,11 +57,11 @@ Public Property Let Ruc(ByVal RHS As Long)
     this.Ruc = RHS
 End Property
 
-Public Property Get Name() As String
-    Name = this.Name
+Public Property Get RazonSocial() As String
+    RazonSocial = this.RazonSocial
 End Property
 
-Public Property Let Name(ByVal RHS As String)
-    this.Name = RHS
+Public Property Let RazonSocial(ByVal RHS As String)
+    this.RazonSocial = RHS
 End Property
 

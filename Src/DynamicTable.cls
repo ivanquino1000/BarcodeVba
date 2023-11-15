@@ -48,7 +48,7 @@ End Type
 
 Private this        As TDynamicTable
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
     With this
         .row = 1
         .column = 1
@@ -76,7 +76,7 @@ Public Sub init(ByVal row As Integer, _
         Set .ws = ws
         .SrcBookPath = FindLatestXLSXFile(Environ("USERPROFILE") & "\Downloads\")
         .NewItemsBookPath = Environ("USERPROFILE") & "\Documents\IMPORT" & "Items.xlsx"
-        .TempBookPath = ThisWorkbook.path & "\Config" & "\TempData.xmls\"
+        .TempBookPath = ThisWorkbook.Path & "\Config" & "\TempData.xmls\"
         With HeadersComp
             .values = Headers
         End With

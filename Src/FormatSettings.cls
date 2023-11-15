@@ -28,7 +28,7 @@ Private this As TFormatSettings
 
 Public Event DataInitialized(ByVal BgColor As Long, ByVal FontColor As Long, ByVal FontSize As Long, ByVal FontName As String)
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
     With this
         .BgColor = RGB(112, 88, 124)
         .Bold = False

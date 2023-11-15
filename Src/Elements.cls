@@ -43,7 +43,7 @@ Public Property Set NewCodeIds(ByVal RHS As Dictionary)
     Set this.NewCodeIds = RHS
 End Property
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
     With this
         Set .values = New Collection
         Set .format = New FormatSettings
@@ -114,7 +114,7 @@ Public Sub Update(ByVal ws As Worksheet, ByVal Headers As Variant)
             row = row + 1
             
             Dim ElemRange As range
-            Set ElemRange = ws.range(Cells(range.row, range.column), _
+            Set ElemRange = range.Rows(row - 1) 'ws.range(Cells(range.row, range.column), _
                                      Cells(range.row, range.Columns.Count))
             If elem.IsNew Then
                 Call ApplyFormat(ElemRange, .NewFormat)

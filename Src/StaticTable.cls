@@ -54,7 +54,7 @@ Private this        As TStaticTable
 
 
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
     With this
         .row = 1
         .column = 1
@@ -110,7 +110,7 @@ Public Sub GetData()
     InitTime = Timer
 
     Dim BackupBookPath As String
-    BackupBookPath = GetParentPath(ThisWorkbook.path) & "SessionBackup" & "\LastSessionItems.xlsx"
+    BackupBookPath = GetParentPath(ThisWorkbook.Path) & "SessionBackup" & "\LastSessionItems.xlsx"
     Dim SourceBook  As Workbook
 
     On Error Resume Next
@@ -318,6 +318,7 @@ Public Sub SetRangeRefences(ByRef range As range, ByRef ws As Worksheet, _
             endColumn & endRow)
 
 End Sub
+
 Public Sub Update()
     UpdateRanges
     With this

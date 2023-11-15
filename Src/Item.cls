@@ -32,7 +32,7 @@ Private this        As TItem
 
 
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
     With this
         '.Id = 0
         '   .Qty = 1

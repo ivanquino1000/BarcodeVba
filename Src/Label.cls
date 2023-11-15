@@ -27,7 +27,7 @@ Private Type TLabel
 End Type
 Private this        As TLabel
 
-Public Sub class_initialize()
+Public Sub Class_Initialize()
     With this
         .row = 2
         .column = 2
@@ -61,7 +61,9 @@ Public Sub ToRange()
         'Define Label Range in Starting Position and Model Dimensions
         'Copy ModelGridMap to LabelRange
         Set LabelRange = .ws.Cells(.row, .column).Resize(.Model.RowSize, .Model.ColumnSize)
+        .Model.CreateGrid .product.BoxPrice, .product.WholeSalePrice, .product.BoxQty, .product.Code
         LabelRange = .Model.GridMap
+        
         For Each cell In LabelRange
             Dim key As String
             Dim keyVal As Variant

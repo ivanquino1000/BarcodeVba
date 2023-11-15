@@ -154,6 +154,7 @@ Private Sub Workbook_SheetBeforeDoubleClick(ByVal Sh As Object, ByVal Target As 
 
                 If Not Intersect(Target, CodeRange) Is Nothing Then
                     product.Code = "AC0001"
+                    product.IsNew = True
                 End If
 
                 listTable.ElementsComp.values.Add product
@@ -243,8 +244,6 @@ Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As range)
 
                         If EMPTY_STATE = True Then
 
-                            Debug.Print "Current ID: " & product.row - .row & vbNewLine & _
-                                    "ELEMENTS COLLECTION: " & .ElementsComp.values.Count & vbNewLine
 
                             PushToVariant RemovalOrderIndexes, product.row - .row
 
@@ -294,8 +293,8 @@ NextItem:
 
                     If Not IsEmpty(RemovalOrderIndexes) Then
                         For i = LBound(RemovalOrderIndexes) To UBound(RemovalOrderIndexes)
-                            Debug.Print "Remove Orders: " & i; RemovalOrderIndexes(i)
-                            .ElementsComp.values.Remove RemovalOrderIndexes(i)
+                           
+                            .ElementsComp.values.Remove RemovalOrderIndexes(i) - i
                         Next i
                     End If
 
@@ -408,6 +407,7 @@ FillResults:
 
     End If
 End Sub
+
 
 
 

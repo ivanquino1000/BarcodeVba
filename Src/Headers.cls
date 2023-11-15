@@ -20,7 +20,7 @@ End Type
 
 Private this        As THeaders
 
-Private Sub class_initialize()
+Private Sub Class_Initialize()
     With this
         .values = Array("Head 1", "Head 2", "Head 3")
         Set .format = New FormatSettings
